@@ -42,7 +42,7 @@ public:
 
     int columnCount() const;
 
-    int columnIndexForName(const string &columnName) const;
+    int columnIndexForName(const string &columnName);
     const string& columnNameForIndex(int columnIndex) const;
 
     int intForColumn(const string &columnName) const;

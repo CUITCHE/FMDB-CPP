@@ -9,6 +9,9 @@
 #include "FMResultSet.h"
 #include "FMStatement.hpp"
 #include "FMDatabase.h"
+#include <algorithm>
+
+using namespace std;
 
 #if FMDB_SQLITE_STANDALONE
 #include <sqlite3/sqlite3.h>
@@ -88,7 +91,25 @@ bool FMResultSet::hasAnotherRow() const
 	return sqlite3_errcode(_parentDB->sqliteHandle()) == SQLITE_ROW;
 }
 
-int FMResultSet::columnIndexForName(const string &columnName) const
+int FMResultSet::columnCount() const
+{
+	return sqlite3_column_count(_statement->getStatement());
+}
+
+int FMResultSet::columnIndexForName(const string &columnName) 
+{
+	string str(columnName);
+	transform(str.begin(), str.end(), str.begin(), tolower);
+	auto iter = columnNameToIndexMap().find(str);
+	if (iter != columnNameToIndexMap().end()) {
+		return iter->second;
+	} else {
+		fprintf(stderr, "Warning: I could not find the column named '%@'.", columnName.c_str());
+		return -1;
+	}
+}
+
+const string& FMResultSet::columnNameForIndex(int columnIndex) const
 {
 
 }
@@ -99,7 +120,9 @@ unordered_map<string, int>& FMResultSet::columnNameToIndexMap()
 		int columnCount = sqlite3_column_count(_statement->getStatement());
 		_columnNameToIndexMap.reserve(columnCount);
 		for (int i = 0;i < columnCount;++i) {
-			_columnNameToIndexMap.emplace(sqlite3_column_name(_statement->getStatement(), i), i);
+			string str(sqlite3_column_name(_statement->getStatement(), i));
+			transform(str.begin(), str.end(), str.begin(), tolower);
+			_columnNameToIndexMap.emplace(str, i);
 		}
 	}
 	return _columnNameToIndexMap;
