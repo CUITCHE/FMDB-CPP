@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include ".\..\..\..\FMDB-CPP\c++\FMDB.h"
+#include "FMDB.h"
 int main()
 {
 	std::cout << "hello world!" << std::endl;

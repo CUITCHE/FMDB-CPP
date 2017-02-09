@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)sqlite3\include;$(IncludePath)</IncludePath>
+    <IncludePath>.\..\..\..\FMDB-CPP\c++;$(ProjectDir)sqlite3\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)sqlite3\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

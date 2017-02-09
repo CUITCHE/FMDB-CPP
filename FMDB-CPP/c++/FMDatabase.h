@@ -82,7 +82,7 @@ public:
 
     /* General inquiry methods */
     const string &databasePath() const { return _databasePath; };
-    const void *sqliteHandle() const { return _db; };
+    sqlite3 *sqliteHandle() const { return _db; };
 
     /* Retrieving error codes */
     string lastErrorMessage() const;

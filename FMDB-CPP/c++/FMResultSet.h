@@ -30,16 +30,18 @@ class FMStatement;
 class FMResultSet
 {
 public:
-    static FMResultSet resultSet(FMStatement *statement, FMDatabase *parentDatabase);
+    static FMResultSet *resultSet(FMStatement *statement, FMDatabase *parentDatabase);
+	FMResultSet() { }
+	~FMResultSet() { close(); }
 
     void close();
-    bool setParentDB(FMDatabase *newdb);
 
     bool next();
     bool nextWithError(void **error);
     bool hasAnotherRow() const;
 
     int columnCount() const;
+
     int columnIndexForName(const string &columnName) const;
     const string& columnNameForIndex(int columnIndex) const;
 
@@ -74,11 +76,16 @@ public:
 
     bool columnIndexIsNull(int columnIndex) const;
     bool columnIsNull(const string &columnName) const;
+
+	void setStatement(FMStatement *stmt) { _statement = stmt; }
+	void setParentDB(FMDatabase *db) { _parentDB = db; }
+
+	unordered_map<string, int>& columnNameToIndexMap();
 private:
     FMDatabase *_parentDB;
     FMStatement *_statement;
     string _query;
-    unordered_map<int, int> _columnNameToIndexMap;
+    unordered_map<string, int> _columnNameToIndexMap;
 };
 
 #endif /* FMResultSet_hpp */
