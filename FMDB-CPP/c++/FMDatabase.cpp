@@ -148,7 +148,12 @@ int FMDBDatabaseBusyHandler(void *f, int count)
     std::chrono::duration<double> delta = std::chrono::system_clock::now() - (self->_startBusyRetryTime);
 
     if (delta < self->_maxBusyRetryTimeInterval) {
-        int requestedSleepInMillseconds = (int) arc4random_uniform(50) + 50;
+#ifdef _MSC_VER
+		int requestedSleepInMillseconds = 50;
+#else
+		int requestedSleepInMillseconds = (int)arc4random_uniform(50) + 50;
+#endif
+        
         int actualSleepInMilliseconds = sqlite3_sleep(requestedSleepInMillseconds);
         if (actualSleepInMilliseconds != requestedSleepInMillseconds) {
             fprintf(stderr, "WARNING: Requested sleep of %i milliseconds, but SQLite returned %i. Maybe SQLite wasn't built with HAVE_USLEEP=1?\n", requestedSleepInMillseconds, actualSleepInMilliseconds);
@@ -413,10 +418,19 @@ const char *const FMDB_CPP_DATE_FORMAT = "%a %b %d %Y %H:%M:%S %Z";
 
 template <>
 void bindObject<const FMDate&> (const FMDate &obj, int toColumn, sqlite3_stmt *stmt) {
-    std::time_t time = std::chrono::system_clock::to_time_t(obj);
+#ifdef _MSC_VER
+	time_t time = std::chrono::system_clock::to_time_t(obj);
+#else
+	std::time_t time = std::chrono::system_clock::to_time_t(obj);
+#endif
     char str[64];
     struct tm tm;
-    localtime_r(&time, &tm);
+#ifdef _MSC_VER
+	localtime_s(&tm, &time);
+#else
+	localtime_r(&time, &tm);
+#endif
+    
     strftime(str, sizeof(str), FMDB_CPP_DATE_FORMAT, &tm);
     sqlite3_bind_text(stmt, toColumn, str, -1, SQLITE_STATIC);
 }

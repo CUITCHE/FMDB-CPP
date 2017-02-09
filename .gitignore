@@ -1,0 +1,6 @@
+*.suo
+msvs/FMDB-CPP-MSVS/FMDB-CPP-MSVS/Debug/*
+msvs/FMDB-CPP-MSVS/Debug/*
+*.opensdf
+*.sdf
+msvs/FMDB-CPP-MSVS/FMDB-CPP-MSVS/ReadMe.txt
