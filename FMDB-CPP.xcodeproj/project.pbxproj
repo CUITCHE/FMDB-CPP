@@ -1,0 +1,302 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
+		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
+		FB88CB181E4C4600005EEECD /* FMDatabasePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */; };
+		FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB131E4C4600005EEECD /* FMResultSet.cpp */; };
+		FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
+		FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FB88CB011E4C45E8005EEECD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		FB88CB031E4C45E8005EEECD /* FMDB-CPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FMDB-CPP"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB88CB061E4C45E8005EEECD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabase.cpp; sourceTree = "<group>"; };
+		FB88CB0F1E4C4600005EEECD /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
+		FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabasePool.cpp; sourceTree = "<group>"; };
+		FB88CB111E4C4600005EEECD /* FMDatabasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabasePool.h; sourceTree = "<group>"; };
+		FB88CB121E4C4600005EEECD /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
+		FB88CB131E4C4600005EEECD /* FMResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMResultSet.cpp; sourceTree = "<group>"; };
+		FB88CB141E4C4600005EEECD /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
+		FB88CB151E4C4600005EEECD /* FMStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMStatement.cpp; sourceTree = "<group>"; };
+		FB88CB161E4C4600005EEECD /* FMStatement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FMStatement.hpp; sourceTree = "<group>"; };
+		FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FB88CB001E4C45E8005EEECD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FB88CAFA1E4C45E8005EEECD = {
+			isa = PBXGroup;
+			children = (
+				FB88CB051E4C45E8005EEECD /* FMDB-CPP */,
+				FB88CB041E4C45E8005EEECD /* Products */,
+				FB88CB1B1E4C4777005EEECD /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		FB88CB041E4C45E8005EEECD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FB88CB031E4C45E8005EEECD /* FMDB-CPP */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FB88CB051E4C45E8005EEECD /* FMDB-CPP */ = {
+			isa = PBXGroup;
+			children = (
+				FB88CB0D1E4C4600005EEECD /* c++ */,
+				FB88CB061E4C45E8005EEECD /* main.cpp */,
+			);
+			path = "FMDB-CPP";
+			sourceTree = "<group>";
+		};
+		FB88CB0D1E4C4600005EEECD /* c++ */ = {
+			isa = PBXGroup;
+			children = (
+				FB88CB121E4C4600005EEECD /* FMDB.h */,
+				FB88CB0F1E4C4600005EEECD /* FMDatabase.h */,
+				FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */,
+				FB88CB111E4C4600005EEECD /* FMDatabasePool.h */,
+				FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */,
+				FB88CB141E4C4600005EEECD /* FMResultSet.h */,
+				FB88CB131E4C4600005EEECD /* FMResultSet.cpp */,
+				FB88CB161E4C4600005EEECD /* FMStatement.hpp */,
+				FB88CB151E4C4600005EEECD /* FMStatement.cpp */,
+			);
+			path = "c++";
+			sourceTree = "<group>";
+		};
+		FB88CB1B1E4C4777005EEECD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FB88CB021E4C45E8005EEECD /* FMDB-CPP */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB88CB0A1E4C45E8005EEECD /* Build configuration list for PBXNativeTarget "FMDB-CPP" */;
+			buildPhases = (
+				FB88CAFF1E4C45E8005EEECD /* Sources */,
+				FB88CB001E4C45E8005EEECD /* Frameworks */,
+				FB88CB011E4C45E8005EEECD /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "FMDB-CPP";
+			productName = "FMDB-CPP";
+			productReference = FB88CB031E4C45E8005EEECD /* FMDB-CPP */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FB88CAFB1E4C45E8005EEECD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = CHE;
+				TargetAttributes = {
+					FB88CB021E4C45E8005EEECD = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 8652TQR753;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = FB88CAFE1E4C45E8005EEECD /* Build configuration list for PBXProject "FMDB-CPP" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FB88CAFA1E4C45E8005EEECD;
+			productRefGroup = FB88CB041E4C45E8005EEECD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FB88CB021E4C45E8005EEECD /* FMDB-CPP */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FB88CAFF1E4C45E8005EEECD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB88CB181E4C4600005EEECD /* FMDatabasePool.cpp in Sources */,
+				FB88CB071E4C45E8005EEECD /* main.cpp in Sources */,
+				FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */,
+				FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */,
+				FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FB88CB081E4C45E8005EEECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FB88CB091E4C45E8005EEECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		FB88CB0B1E4C45E8005EEECD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 8652TQR753;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FB88CB0C1E4C45E8005EEECD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = 8652TQR753;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FB88CAFE1E4C45E8005EEECD /* Build configuration list for PBXProject "FMDB-CPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB88CB081E4C45E8005EEECD /* Debug */,
+				FB88CB091E4C45E8005EEECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FB88CB0A1E4C45E8005EEECD /* Build configuration list for PBXNativeTarget "FMDB-CPP" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB88CB0B1E4C45E8005EEECD /* Debug */,
+				FB88CB0C1E4C45E8005EEECD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FB88CAFB1E4C45E8005EEECD /* Project object */;
+}
