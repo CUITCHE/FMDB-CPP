@@ -9,6 +9,8 @@
 #include "FMStatement.hpp"
 #include <sqlite3.h>
 
+FMDB_BEGIN
+
 FMStatement::~FMStatement()
 {
     close();
@@ -30,3 +32,5 @@ void FMStatement::reset()
     }
     _inUse = false;
 }
+
+FMDB_END

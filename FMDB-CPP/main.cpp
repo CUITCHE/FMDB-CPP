@@ -15,5 +15,7 @@ int main(int argc, const char * argv[]) {
     std::this_thread::sleep_for(std::chrono::seconds(2));
     std::chrono::duration<double> duration = std::chrono::system_clock::now() - start;
     std::cout << duration.count() << std::endl;
+    std::cout << std::chrono::duration<double>(2).count() << std::endl;
+    std::cout << sizeof(std::chrono::system_clock::time_point) << std::endl;
     return 0;
 }

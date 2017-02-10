@@ -19,7 +19,9 @@ using namespace std;
 #include <sqlite3.h>
 #endif
 
-FMResultSet * FMResultSet::resultSet(FMStatement *statement, FMDatabase *parentDatabase)
+FMDB_BEGIN
+
+FMResultSet *FMResultSet::resultSet(FMStatement *statement, FMDatabase *parentDatabase)
 {
 	FMResultSet *rs = new FMResultSet();
 	rs->setStatement(statement);
@@ -96,7 +98,7 @@ int FMResultSet::columnCount() const
 	return sqlite3_column_count(_statement->getStatement());
 }
 
-int FMResultSet::columnIndexForName(const string &columnName) 
+int FMResultSet::columnIndexForName(const string &columnName) const
 {
 	string str(columnName);
 	transform(str.begin(), str.end(), str.begin(), tolower);
@@ -104,26 +106,87 @@ int FMResultSet::columnIndexForName(const string &columnName)
 	if (iter != columnNameToIndexMap().end()) {
 		return iter->second;
 	} else {
-		fprintf(stderr, "Warning: I could not find the column named '%@'.", columnName.c_str());
+		fprintf(stderr, "Warning: I could not find the column named '%s'.", columnName.c_str());
 		return -1;
 	}
 }
 
-const string& FMResultSet::columnNameForIndex(int columnIndex) const
+string FMResultSet::columnNameForIndex(int columnIndex) const
 {
-
+    return string(sqlite3_column_name(_statement->getStatement(), columnIndex));
 }
 
-unordered_map<string, int>& FMResultSet::columnNameToIndexMap()
+int FMResultSet::intForColumnIndex(int colunmIndex) const
+{
+    return sqlite3_column_int(_statement->getStatement(), colunmIndex);
+}
+
+long FMResultSet::longForColumnIndex(int columnIndex) const
+{
+    return
+#if __LP64__
+    sqlite3_column_int64(_statement->getStatement(), columnIndex);
+#else
+    sqlite3_column_int(_statement->getStatement(), columnIndex);
+#endif
+}
+
+long long FMResultSet::longLongForColumnIndex(int columnIndex) const
+{
+    return sqlite3_column_int64(_statement->getStatement(), columnIndex);
+}
+
+double FMResultSet::doubleForColumnIndex(int columnIndex) const
+{
+    return sqlite3_column_double(_statement->getStatement(), columnIndex);
+}
+
+bool FMResultSet::boolForColumnIndex(int columnIndex) const
+{
+    return !!sqlite3_column_int(_statement->getStatement(), columnIndex);
+}
+
+String FMResultSet::stringForColumnIndex(int columnIndex) const
+{
+    if (sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL || (columnIndex < 0)) {
+        return String();
+    }
+    const char *c = (const char *)sqlite3_column_text(_statement->getStatement(), columnIndex);
+    if (!c) {
+        return String();
+    }
+    return make_shared<String::element_type>(c);
+}
+
+Data FMResultSet::dataForColumnIndex(int columnIndex) const
+{
+    if (sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL || (columnIndex < 0)) {
+        return Data();
+    }
+
+    const char *dataBuffer = (const char *)sqlite3_column_blob(_statement->getStatement(), columnIndex);
+    int dataSize = sqlite3_column_bytes(_statement->getStatement(), columnIndex);
+
+    if (dataBuffer == NULL) {
+        return Data();
+    }
+
+    return make_shared<Data::element_type>(dataBuffer, dataBuffer+dataSize);
+}
+
+const unordered_map<string, int>& FMResultSet::columnNameToIndexMap() const
 {
 	if (_columnNameToIndexMap.size() == 0) {
 		int columnCount = sqlite3_column_count(_statement->getStatement());
-		_columnNameToIndexMap.reserve(columnCount);
+        auto remove_cv_this = (std::remove_cv<std::remove_pointer<decltype(this)>::type>::type *)this;
+        remove_cv_this->_columnNameToIndexMap.reserve(columnCount);
 		for (int i = 0;i < columnCount;++i) {
 			string str(sqlite3_column_name(_statement->getStatement(), i));
 			transform(str.begin(), str.end(), str.begin(), tolower);
-			_columnNameToIndexMap.emplace(str, i);
+			remove_cv_this->_columnNameToIndexMap.emplace(str, i);
 		}
 	}
 	return _columnNameToIndexMap;
 }
+
+FMDB_END

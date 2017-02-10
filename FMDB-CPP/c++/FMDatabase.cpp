@@ -14,6 +14,8 @@
 
 using namespace std;
 
+FMDB_BEGIN
+
 FMDatabase::FMDatabase(const string &path)
 :_logsErrors(true)
 ,_crashOnErrors(false)
@@ -77,7 +79,7 @@ bool FMDatabase::openWithFlags(int flags, const string &vfs)
         return false;
     }
 
-    if (_maxBusyRetryTimeInterval > std::chrono::duration<double>(0)) {
+    if (_maxBusyRetryTimeInterval > TimeInterval(0)) {
         // set the handler
         setMaxBusyRetryTimeInterval(_maxBusyRetryTimeInterval.count());
     }
@@ -145,7 +147,7 @@ int FMDBDatabaseBusyHandler(void *f, int count)
         return 1;
     }
 
-    std::chrono::duration<double> delta = std::chrono::system_clock::now() - (self->_startBusyRetryTime);
+    TimeInterval delta = std::chrono::system_clock::now() - (self->_startBusyRetryTime);
 
     if (delta < self->_maxBusyRetryTimeInterval) {
 #ifdef _MSC_VER
@@ -418,11 +420,7 @@ const char *const FMDB_CPP_DATE_FORMAT = "%a %b %d %Y %H:%M:%S %Z";
 
 template <>
 void bindObject<const FMDate&> (const FMDate &obj, int toColumn, sqlite3_stmt *stmt) {
-#ifdef _MSC_VER
-	time_t time = std::chrono::system_clock::to_time_t(obj);
-#else
-	std::time_t time = std::chrono::system_clock::to_time_t(obj);
-#endif
+    time_t time = std::chrono::system_clock::to_time_t(obj);
     char str[64];
     struct tm tm;
 #ifdef _MSC_VER
@@ -435,3 +433,4 @@ void bindObject<const FMDate&> (const FMDate &obj, int toColumn, sqlite3_stmt *s
     sqlite3_bind_text(stmt, toColumn, str, -1, SQLITE_STATIC);
 }
 
+FMDB_END

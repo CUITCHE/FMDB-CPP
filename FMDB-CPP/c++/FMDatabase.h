@@ -9,23 +9,23 @@
 #ifndef FMDatabase_hpp
 #define FMDatabase_hpp
 
-#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <memory>
-#include <vector>
-#include <chrono>
+#include "FMDBDefs.h"
 
-using std::string;
 using std::unordered_map;
 using std::unordered_set;
 using std::unique_ptr;
-using std::vector;
+
+typedef struct sqlite3 sqlite3;
+
+FMDB_BEGIN
+
+extern const char *const FMDB_CPP_DATE_FORMAT;
 
 class FMStatement;
 class FMResultSet;
 
-typedef struct sqlite3 sqlite3;
 using FMDate = std::chrono::time_point<std::chrono::system_clock>;
 
 class FMDatabase
@@ -113,11 +113,14 @@ private:
     uint32_t reserve;
 #endif
     sqlite3 *_db = nullptr;
-    std::chrono::duration<double> _maxBusyRetryTimeInterval = std::chrono::duration<double>(2); // 2 seconds
-    std::chrono::time_point<std::chrono::system_clock> _startBusyRetryTime;
+    TimeInterval _maxBusyRetryTimeInterval = TimeInterval(2); // 2 seconds
+    Date _startBusyRetryTime;
     StatemenCacheType _cachedStatements;
     unique_ptr<unordered_set<FMResultSet *>> _openResultSets;
     unique_ptr<unordered_set<FMStatement *>> _openFunctions;
     const string _databasePath;
 };
+
+FMDB_END
+
 #endif /* FMDatabase_hpp */

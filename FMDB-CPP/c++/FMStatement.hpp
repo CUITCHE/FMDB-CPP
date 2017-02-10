@@ -9,11 +9,11 @@
 #ifndef FMStatement_hpp
 #define FMStatement_hpp
 
-#include <string>
-
-using std::string;
+#include "FMDBDefs.h"
 
 typedef struct sqlite3_stmt sqlite3_stmt;
+
+FMDB_BEGIN
 
 class FMStatement
 {
@@ -43,5 +43,7 @@ private:
     long _useCount;
     
 };
+
+FMDB_END
 
 #endif /* FMStatement_hpp */

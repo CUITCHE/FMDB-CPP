@@ -13,6 +13,7 @@
 		FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB131E4C4600005EEECD /* FMResultSet.cpp */; };
 		FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
 		FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
+		FB8D2D891E4D82B70060F9F3 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,9 @@
 		FB88CB151E4C4600005EEECD /* FMStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMStatement.cpp; sourceTree = "<group>"; };
 		FB88CB161E4C4600005EEECD /* FMStatement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FMStatement.hpp; sourceTree = "<group>"; };
 		FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		FB8D2D861E4D6D0C0060F9F3 /* FMDBDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDBDefs.h; sourceTree = "<group>"; };
+		FB8D2D871E4D82B70060F9F3 /* Date.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Date.cpp; sourceTree = "<group>"; };
+		FB8D2D881E4D82B70060F9F3 /* Date.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Date.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +96,9 @@
 				FB88CB131E4C4600005EEECD /* FMResultSet.cpp */,
 				FB88CB161E4C4600005EEECD /* FMStatement.hpp */,
 				FB88CB151E4C4600005EEECD /* FMStatement.cpp */,
+				FB8D2D861E4D6D0C0060F9F3 /* FMDBDefs.h */,
+				FB8D2D871E4D82B70060F9F3 /* Date.cpp */,
+				FB8D2D881E4D82B70060F9F3 /* Date.hpp */,
 			);
 			path = "c++";
 			sourceTree = "<group>";
@@ -165,6 +172,7 @@
 				FB88CB181E4C4600005EEECD /* FMDatabasePool.cpp in Sources */,
 				FB88CB071E4C45E8005EEECD /* main.cpp in Sources */,
 				FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */,
+				FB8D2D891E4D82B70060F9F3 /* Date.cpp in Sources */,
 				FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */,
 				FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */,
 			);
@@ -295,6 +303,7 @@
 				FB88CB0C1E4C45E8005EEECD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

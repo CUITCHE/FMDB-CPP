@@ -7,3 +7,7 @@
 //
 
 #include "FMDatabasePool.h"
+
+FMDB_BEGIN
+
+FMDB_END
