@@ -148,18 +148,23 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\FMDB-CPP\c++\Date.cpp" />
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMDatabase.cpp" />
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMDatabasePool.cpp" />
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMResultSet.cpp" />
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMStatement.cpp" />
+    <ClCompile Include="..\..\..\FMDB-CPP\c++\Variant.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\FMDB-CPP\c++\Date.hpp" />
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDatabase.h" />
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDatabasePool.h" />
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDB.h" />
+    <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDBDefs.h" />
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMResultSet.h" />
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMStatement.hpp" />
+    <ClInclude Include="..\..\..\FMDB-CPP\c++\Variant.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

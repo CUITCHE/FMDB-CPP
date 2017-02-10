@@ -149,7 +149,10 @@ public:
         return copy;
     }
 
-    friend std::ostream& operator<<(std::ostream &os, const Date &date)
+	bool operator==(const Date &rhs) { return this->d == rhs.d; }
+	bool operator!=(const Date &rhs) { return !(*this == rhs); }
+
+	friend std::ostream& operator<<(std::ostream &os, const Date &date)
     {
         os << date.description();
         return os;
