@@ -8,14 +8,13 @@
 
 #include <iostream>
 #include "FMDB.h"
-#include <thread>
+#include "Date.hpp"
+
+using namespace std;
+using namespace __FMDB_NSPEC();
 
 int main(int argc, const char * argv[]) {
-    auto start = std::chrono::system_clock::now();
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    std::chrono::duration<double> duration = std::chrono::system_clock::now() - start;
-    std::cout << duration.count() << std::endl;
-    std::cout << std::chrono::duration<double>(2).count() << std::endl;
-    std::cout << sizeof(std::chrono::system_clock::time_point) << std::endl;
+    __FMDB_NSPEC()::Date date(TimeInterval(20));
+    cout << date << endl;
     return 0;
 }

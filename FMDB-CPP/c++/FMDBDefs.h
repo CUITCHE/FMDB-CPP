@@ -32,10 +32,11 @@ using std::shared_ptr;
 
 FMDB_BEGIN
 
+using namespace std::chrono;
+
 using Data = shared_ptr<vector<unsigned char>>;
 using String = shared_ptr<string>;
-using TimeInterval = std::chrono::duration<double>;
-using Date = std::chrono::system_clock::time_point;
+using TimeInterval = duration<double>;
 
 FMDB_END
 

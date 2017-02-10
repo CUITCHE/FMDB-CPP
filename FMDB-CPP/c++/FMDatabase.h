@@ -21,12 +21,10 @@ typedef struct sqlite3 sqlite3;
 
 FMDB_BEGIN
 
-extern const char *const FMDB_CPP_DATE_FORMAT;
-
 class FMStatement;
 class FMResultSet;
 
-using FMDate = std::chrono::time_point<std::chrono::system_clock>;
+using FMDate = time_point<system_clock>;
 
 class FMDatabase
 {
@@ -90,7 +88,7 @@ public:
     int lastExtendedErrorCode() const;
     bool hadError() const;
 
-    void setMaxBusyRetryTimeInterval(double timeoutInSeconds);
+    void setMaxBusyRetryTimeInterval(TimeInterval timeoutInSeconds);
     double maxBusyRetryTimeInterval() const { return _maxBusyRetryTimeInterval.count(); };
 private:
     const char *sqlitePath() const;
@@ -114,7 +112,7 @@ private:
 #endif
     sqlite3 *_db = nullptr;
     TimeInterval _maxBusyRetryTimeInterval = TimeInterval(2); // 2 seconds
-    Date _startBusyRetryTime;
+    TimeInterval _startBusyRetryTime;
     StatemenCacheType _cachedStatements;
     unique_ptr<unordered_set<FMResultSet *>> _openResultSets;
     unique_ptr<unordered_set<FMStatement *>> _openFunctions;

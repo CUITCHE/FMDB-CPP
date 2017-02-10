@@ -9,6 +9,7 @@
 #include "FMDatabase.h"
 #include "FMStatement.hpp"
 #include "FMResultSet.h"
+#include "Date.hpp"
 #include <cassert>
 #include <sqlite3.h>
 
@@ -56,7 +57,7 @@ bool FMDatabase::open()
         return false;
     }
     if (_maxBusyRetryTimeInterval.count() > 0) {
-        setMaxBusyRetryTimeInterval(_maxBusyRetryTimeInterval.count());
+        setMaxBusyRetryTimeInterval(_maxBusyRetryTimeInterval);
     }
     return true;
 }
@@ -81,7 +82,7 @@ bool FMDatabase::openWithFlags(int flags, const string &vfs)
 
     if (_maxBusyRetryTimeInterval > TimeInterval(0)) {
         // set the handler
-        setMaxBusyRetryTimeInterval(_maxBusyRetryTimeInterval.count());
+        setMaxBusyRetryTimeInterval(_maxBusyRetryTimeInterval);
     }
 
     return true;
@@ -143,11 +144,11 @@ int FMDBDatabaseBusyHandler(void *f, int count)
     FMDatabase *self = (FMDatabase *)f;
 
     if (count == 0) {
-        self->_startBusyRetryTime = std::chrono::system_clock::now();
+        self->_startBusyRetryTime = Date().timeIntervalSinceReferenceDate();
         return 1;
     }
 
-    TimeInterval delta = std::chrono::system_clock::now() - (self->_startBusyRetryTime);
+    TimeInterval delta = Date().timeIntervalSinceReferenceDate() - (self->_startBusyRetryTime);
 
     if (delta < self->_maxBusyRetryTimeInterval) {
 #ifdef _MSC_VER
@@ -166,14 +167,14 @@ int FMDBDatabaseBusyHandler(void *f, int count)
     return 0;
 }
 
-void FMDatabase::setMaxBusyRetryTimeInterval(double timeout)
+void FMDatabase::setMaxBusyRetryTimeInterval(TimeInterval timeout)
 {
-    _maxBusyRetryTimeInterval = decltype(_maxBusyRetryTimeInterval)(timeout);
+    _maxBusyRetryTimeInterval = timeout;
     if (!_db) {
         return;
     }
 
-    if (timeout > 0) {
+    if (timeout > TimeInterval(0)) {
         sqlite3_busy_handler(_db, &FMDBDatabaseBusyHandler, this);
     } else {
         sqlite3_busy_handler(_db, nullptr, nullptr);
@@ -406,8 +407,8 @@ void bindObject<const string&>(const string &obj, int toColumn, sqlite3_stmt *st
 }
 
 template <>
-void bindObject<const vector<char>&>(const vector<char> &obj, int toColumn, sqlite3_stmt *stmt) {
-    auto bytes = obj.data();
+void bindObject<const vector<unsigned char>&>(const vector<unsigned char> &obj, int toColumn, sqlite3_stmt *stmt) {
+    const void *bytes = obj.data();
     int length = (int)obj.size();
     if (!bytes) {
         bytes = "";
@@ -416,20 +417,10 @@ void bindObject<const vector<char>&>(const vector<char> &obj, int toColumn, sqli
     sqlite3_bind_blob(stmt, toColumn, bytes, length, SQLITE_STATIC);
 }
 
-const char *const FMDB_CPP_DATE_FORMAT = "%a %b %d %Y %H:%M:%S %Z";
-
 template <>
-void bindObject<const FMDate&> (const FMDate &obj, int toColumn, sqlite3_stmt *stmt) {
-    time_t time = std::chrono::system_clock::to_time_t(obj);
-    char str[64];
-    struct tm tm;
-#ifdef _MSC_VER
-	localtime_s(&tm, &time);
-#else
-	localtime_r(&time, &tm);
-#endif
-    
-    strftime(str, sizeof(str), FMDB_CPP_DATE_FORMAT, &tm);
+void bindObject<Date> (Date obj, int toColumn, sqlite3_stmt *stmt) {
+    auto str = obj.description().c_str();
+    assert(str);
     sqlite3_bind_text(stmt, toColumn, str, -1, SQLITE_STATIC);
 }
 

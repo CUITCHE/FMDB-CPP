@@ -174,6 +174,24 @@ Data FMResultSet::dataForColumnIndex(int columnIndex) const
     return make_shared<Data::element_type>(dataBuffer, dataBuffer+dataSize);
 }
 
+shared_ptr<Date> FMResultSet::dateForColumnIndex(int columnIndex) const
+{
+    if (sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL || (columnIndex < 0)) {
+        return shared_ptr<Date>();
+    }
+    auto dateString = stringForColumnIndex(columnIndex);
+    if (!dateString) {
+        return shared_ptr<Date>();
+    }
+    auto date = Date::dateFromString(*dateString);
+    return make_shared<Date>(date);
+}
+
+bool FMResultSet::columnIndexIsNull(int columnIndex) const
+{
+    return sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL;
+}
+
 const unordered_map<string, int>& FMResultSet::columnNameToIndexMap() const
 {
 	if (_columnNameToIndexMap.size() == 0) {

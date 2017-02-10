@@ -8,17 +8,18 @@
 
 #include "Date.hpp"
 
-using namespace std::chrono;
+FMDB_BEGIN
 
 const TimeInterval TimeIntervalSince1970 = TimeInterval(978307200.0);
+const char *const FMDB_CPP_DATE_FORMAT = "%a %b %d %Y %H:%M:%S %z";
 
 Date::Date()
 :d(system_clock::now())
 {
 }
 
-Date::Date(int)
-:d(duration_cast<system_clock::duration>(TimeInterval(0)))
+Date::Date(system_clock::time_point tp)
+:d(tp)
 {
 }
 
@@ -29,7 +30,7 @@ Date::Date(TimeInterval SinceReferenceDate)
 
 Date Date::clone()
 {
-    Date date(1);
+    Date date(microseconds(0));
     date.d = d;
     return date;
 }
@@ -72,14 +73,14 @@ Date Date::dateWithTimeIntervalSinceNow(TimeInterval secs)
 
 Date Date::dateWithTimeIntervalSince1970(TimeInterval secs)
 {
-    Date date(1);
+    Date date(microseconds(0));
     date.d += duration_cast<system_clock::duration>(secs);
     return date;
 }
 
 Date Date::dateWithTimeIntervalSinceReferenceDate(TimeInterval ti)
 {
-    Date date(0);
+    Date date(microseconds(0));
     date.d += duration_cast<system_clock::duration>(TimeIntervalSince1970 + ti);
     return date;
 }
@@ -89,3 +90,35 @@ Date Date::dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate)
     sinceDate.d += duration_cast<system_clock::duration>(secsToAdded);
     return sinceDate;
 }
+
+Date Date::dateFromString(const string &dateString)
+{
+    struct tm tm;
+    strptime(dateString.c_str(), FMDB_CPP_DATE_FORMAT, &tm);
+
+    Date date(microseconds(0));
+    date.d = system_clock::from_time_t(mktime(&tm));
+    return date;
+}
+
+string Date::stringFromDate(Date date)
+{
+    time_t time = system_clock::to_time_t(date.d);
+    char str[64];
+    struct tm tm;
+#ifdef _MSC_VER
+    localtime_s(&tm, &time);
+#else
+    localtime_r(&time, &tm);
+#endif
+
+    size_t length = strftime(str, sizeof(str), FMDB_CPP_DATE_FORMAT, &tm);
+    return string(str, str + length);
+}
+
+string Date::description() const
+{
+    return Date::stringFromDate(*this);
+}
+
+FMDB_END

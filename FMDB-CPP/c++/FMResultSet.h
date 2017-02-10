@@ -11,6 +11,7 @@
 
 #include <unordered_map>
 #include "FMDBDefs.h"
+#include "Date.hpp"
 
 using std::unordered_map;
 
@@ -65,6 +66,9 @@ public:
     Data dataForColumn(const string &columnName) const { return dataForColumnIndex(columnIndexForName(columnName)); }
     Data dataForColumnIndex(int columnIndex) const;
 
+    shared_ptr<Date> dateForColumn(const string &columnName) const { return dateForColumnIndex(columnIndexForName(columnName)); }
+    shared_ptr<Date> dateForColumnIndex(int columnIndex) const;
+
     const unsigned char * UTF8StringForColumn(const string &columnName) const { return UTF8StringForColumnIndex(columnIndexForName(columnName)); }
     const unsigned char * UTF8StringForColumnIndex(int columnIndex) const;
 #if defined(NS_CC)
@@ -73,8 +77,8 @@ public:
     CCValue valueForColumnIndex(int colunmIndex) const;
 #endif
 
+    bool columnIsNull(const string &columnName) const { return columnIndexIsNull(columnIndexForName(columnName)); }
     bool columnIndexIsNull(int columnIndex) const;
-    bool columnIsNull(const string &columnName) const;
 
 	void setStatement(FMStatement *stmt) { _statement = stmt; }
 	void setParentDB(FMDatabase *db) { _parentDB = db; }
