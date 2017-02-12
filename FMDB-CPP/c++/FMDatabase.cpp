@@ -202,6 +202,47 @@ void FMDatabase::resultSetDidClose(FMResultSet *resultSet)
     _openResultSets->erase(resultSet);
 }
 
+bool FMDatabase::beginTransaction()
+{
+	bool b = executeUpdate("begin exclusive transaction");
+	if (b) {
+		_inTransaction = true;
+	}
+	return b;
+}
+
+bool FMDatabase::beginDeferredTransaction()
+{
+	bool b = executeUpdate("begin deferred transaction");
+	if (b) {
+		_inTransaction = true;
+	}
+	return b;
+}
+
+bool FMDatabase::commit()
+{
+	bool b = executeUpdate("commit transaction");
+	if (b) {
+		_inTransaction = false;
+	}
+	return b;
+}
+
+bool FMDatabase::rollback()
+{
+	bool b = executeUpdate("rollback transaction");
+	if (b) {
+		_inTransaction = false;
+	}
+	return b;
+}
+
+bool FMDatabase::inTransaction()
+{
+	return _inTransaction;
+}
+
 #pragma mark Cached statements
 void FMDatabase::clearCachedStatements()
 {
@@ -268,6 +309,15 @@ bool FMDatabase::reKey(const vector<char> &key)
 #pragma unused(key)
     return false;
 #endif
+}
+
+bool FMDatabase::interrupt()
+{
+	if (_db) {
+		sqlite3_interrupt(sqliteHandle());
+		return true;
+	}
+	return false;
 }
 
 bool FMDatabase::setKey(const string &key)
@@ -514,6 +564,62 @@ FMResultSet * FMDatabase::executeQueryImpl(const string & sql, FMStatement *stat
 	_isExecutingStatement = false;
 
 	return rs;
+}
+
+bool FMDatabase::executeUpdateImpl(const string & sql, FMStatement * statement, sqlite3_stmt * pStmt)
+{
+	int rc = sqlite3_step(pStmt);
+	if (rc == SQLITE_DONE) {
+		//
+	} else if (rc == SQLITE_INTERRUPT) {
+		if (_logsErrors) {
+			fprintf(stderr, "Error calling sqlite3_step. Query was interrupted (%d: %s) SQLITE_INTERRUPT", rc, sqlite3_errmsg(_db));
+			fprintf(stderr, "DB Query: %s", sql.c_str());
+		}
+	} else if (rc == SQLITE_ROW) {
+		if (_logsErrors) {
+			fprintf(stderr, "A executeUpdate is being called with a query string '%s'", sql.c_str());
+			fprintf(stderr, "DB Query: %s", sql.c_str());
+		}
+	} else {
+		if (rc == SQLITE_ERROR) {
+			if (_logsErrors) {
+				fprintf(stderr, "Error calling sqlite3_step(%d: %s) SQLITE_ERROR", rc, sqlite3_errmsg(_db));
+				fprintf(stderr, "DB Query: %s", sql.c_str());
+			}
+		} else if (rc == SQLITE_MISUSE) {
+			if (_logsErrors) {
+				fprintf(stderr, "Error calling sqlite3_step(%d: %s) SQLITE_MISUSE", rc, sqlite3_errmsg(_db));
+				fprintf(stderr, "DB Query: %s", sql.c_str());
+			}
+		} else {
+			if (_logsErrors) {
+				fprintf(stderr, "Unknown error calling sqlite3_step(%d: %s) eu", rc, sqlite3_errmsg(_db));
+				fprintf(stderr, "DB Query: %s", sql.c_str());
+			}
+		}
+	}
+	if (_shouldCacheStatements && !statement) {
+		statement = new FMStatement;
+		statement->setStatement(pStmt);
+		setCachedStatement(statement, sql);
+	}
+	int closeErrorCode = 0;
+	if (statement) {
+		statement->setUseCount(statement->getUseCount() + 1);
+		closeErrorCode = sqlite3_reset(pStmt);
+	} else {
+		closeErrorCode = sqlite3_finalize(pStmt);
+	}
+	if (closeErrorCode != SQLITE_OK) {
+		if (_logsErrors) {
+			fprintf(stderr, "Unknown error finalizing or resetting statement(%d: %s)", closeErrorCode, sqlite3_errmsg(_db));
+			fprintf(stderr, "DB Query: %s", sql.c_str());
+		}
+	}
+	_isExecutingStatement = false;
+	return rc == SQLITE_DONE || rc == SQLITE_OK;
+	return false;
 }
 
 FMDB_END

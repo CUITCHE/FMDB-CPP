@@ -32,7 +32,6 @@ class FMDatabase
 public:
     using StatemenCacheType = unique_ptr<unordered_map<string, unordered_set<FMStatement *>>>;
 
-    static FMDatabase databaseWithPath(const string &path);
     FMDatabase(const string &filepath);
     ~FMDatabase();
 
@@ -67,8 +66,8 @@ public:
     void clearCachedStatements();
     void closeOpenResultSets();
     bool hasOpenResultSets();
-    bool shouldCacheStatements();
-    void setShouldCacheStatements(bool value);
+	bool shouldCacheStatements() const { return _shouldCacheStatements; }
+	void setShouldCacheStatements(bool value) { _shouldCacheStatements = value; }
 
     bool interrupt();
 
@@ -95,6 +94,9 @@ public:
 	/** execute sql templates */
 	template<typename... Args>
 	FMResultSet *executeQuery(const string &sql, Args... args);
+
+	template<typename... Args>
+	bool executeUpdate(const string &sql, Args... args);
 private:
 	bool executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, FMStatement *&statement);
 	bool executeQueryParametersCheck(int inputParametersCount, sqlite3_stmt *pStmt);
@@ -103,6 +105,8 @@ private:
 	void bindObjects(sqlite3_stmt *inStmt, const T &v, Args... args);
 	template<int paramN>
 	void bindObjects(sqlite3_stmt *inStmt);
+
+	bool executeUpdateImpl(const string &sql, FMStatement *statement, sqlite3_stmt *pStmt);
 private:
     const char *sqlitePath() const;
     friend int FMDBDatabaseBusyHandler(void *f, int count);
@@ -119,9 +123,9 @@ private:
     uint32_t _crashOnErrors : 1;
     uint32_t _traceExecution : 1;
     uint32_t _checkedOut : 1;
-    uint32_t _shouldCacheStatements : 1;
+	volatile uint32_t _shouldCacheStatements : 1;
     volatile uint32_t _isExecutingStatement : 1;
-    uint32_t _inTransaction : 1;
+	volatile uint32_t _inTransaction : 1;
 #if __LP64__
     uint32_t reserve;
 #endif
@@ -147,6 +151,21 @@ inline FMResultSet * FMDatabase::executeQuery(const string &sql, Args... args)
 	}
 	bindObjects<0>(pStmt, std::forward<Args>(args)...);
 	return executeQueryImpl(sql, statement, pStmt);
+}
+
+template<typename ...Args>
+inline bool FMDatabase::executeUpdate(const string & sql, Args ...args)
+{
+	sqlite3_stmt *pStmt = 0;
+	FMStatement *statement = 0;
+	if (!executeQueryPrepareAndCheck(sql, pStmt, statement)) { // Sqlite environment check
+		return nullptr;
+	}
+	if (!executeQueryParametersCheck(sizeof...(args), pStmt)) { // Parameters count check
+		return nullptr;
+	}
+	bindObjects<0>(pStmt, std::forward<Args>(args)...);
+	return executeUpdateImpl(sql,statement, pStmt);
 }
 
 template<int paramN, typename ...Args, typename T>
