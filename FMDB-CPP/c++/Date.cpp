@@ -113,7 +113,7 @@ Date Date::dateFromString(const string &dateString)
     return date;
 }
 
-string Date::stringFromDate(Date date)
+string Date::stringFromDate(const Date &date)
 {
     time_t time = system_clock::to_time_t(date.d);
     char str[64];

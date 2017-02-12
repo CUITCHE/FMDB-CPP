@@ -14,8 +14,6 @@
 
 FMDB_BEGIN
 
-using TimeInterval = std::chrono::duration<double>;
-
 extern const TimeInterval TimeIntervalSince1970;
 
 class Date {
@@ -93,7 +91,7 @@ public:
     static Date dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate);
     static Date dateFromString(const std::string &dateString);
 
-    static string stringFromDate(Date date);
+    static string stringFromDate(const Date &date);
 
     string description() const;
 

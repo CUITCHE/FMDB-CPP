@@ -82,6 +82,7 @@ public:
 
 	void setStatement(FMStatement *stmt) { _statement = stmt; }
 	void setParentDB(FMDatabase *db) { _parentDB = db; }
+	void setQuery(const string &query) { _query = query; }
 
 	const unordered_map<string, int>& columnNameToIndexMap() const;
 private:

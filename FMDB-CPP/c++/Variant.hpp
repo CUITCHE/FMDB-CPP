@@ -26,6 +26,7 @@ using VariantData		= vector<unsigned char>;
 class Variant
 {
 public:
+	static const Variant null;
     Variant();
 
     explicit Variant(bool v);
@@ -90,6 +91,8 @@ public:
      */
     bool convert(Type toType) const;
 
+    bool isTypeOf(Type type) const { return type == _type; }
+
     /**
      * Checks if the Variant is null.
      * @return True if the Variant is null, false if not.
@@ -114,6 +117,9 @@ public:
     string toString() const;
 	const Date& toDate() const;
     
+	/** Return stored string object if type is STRING, otherwise will trigger error. */
+	const string& toString();
+
 	VariantVector& toVariantVector();
 	const VariantVector& toVariantVector() const;
 
@@ -178,6 +184,8 @@ public:
 	bool operator== (const Variant& v);
 	/** == operator overloading */
 	bool operator== (const Variant& v) const;
+
+	operator bool() const { return !isNull(); }
 private:
     void clear();
     void reset(Type type);

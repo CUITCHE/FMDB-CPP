@@ -36,7 +36,7 @@ using namespace std::chrono;
 
 using Data = shared_ptr<vector<unsigned char>>;
 using String = shared_ptr<string>;
-using TimeInterval = duration<double>;
+using TimeInterval = std::chrono::duration<double>;
 
 FMDB_END
 

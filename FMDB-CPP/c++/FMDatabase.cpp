@@ -10,6 +10,7 @@
 #include "FMStatement.hpp"
 #include "FMResultSet.h"
 #include "Date.hpp"
+/*#include "Variant.hpp"*/
 #include <cassert>
 #include <sqlite3.h>
 
@@ -110,7 +111,7 @@ bool FMDatabase::close()
         if (SQLITE_BUSY == rc || SQLITE_LOCKED == rc) {
             if (!triedFinalizingOpenStatements) {
                 triedFinalizingOpenStatements = true;
-                sqlite3_stmt *pStmt;
+                sqlite3_stmt *pStmt = 0;
                 while ((pStmt = sqlite3_next_stmt(_db, nullptr)) !=0) {
                     fprintf(stderr, "Closing leaked statement\n");
                     sqlite3_finalize(pStmt);
@@ -380,48 +381,139 @@ int FMDatabase::changes()
 }
 
 #pragma mark SQL manipulation
-template<typename T>
-void bindObject(T obj, int toColumn, sqlite3_stmt *stmt) {
-    static_assert(std::is_pointer<T>::value == false, "Don't support pointer");
-    sqlite3_bind_int(stmt, toColumn, obj);
+void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * inStmt)
+{
+	if (!obj || obj == Variant::null) {
+		sqlite3_bind_null(inStmt, toColumn);
+	} else if (obj.isTypeOf(Variant::Type::DATA)) {
+        auto &data = obj.toVariantData();
+        const void *bytes = data.data();
+        size_t length = data.size();
+        if (!bytes) {
+            bytes = "";
+            length = 0;
+        }
+        sqlite3_bind_blob(inStmt, toColumn, bytes, (int)length, SQLITE_STATIC);
+	} else if (obj.isTypeOf(Variant::Type::DATE)) {
+        auto &date = obj.toDate();
+#ifdef FMDB_CONCERN_MEMORY
+		sqlite3_bind_double(inStmt, toColumn, date.timeIntervalSince1970().count());
+#else
+        string dateString = Date::stringFromDate(date);
+        sqlite3_bind_text(inStmt, toColumn, dateString.c_str(), dateString.size(), SQLITE_STATIC);
+#endif
+	} else if (obj.isTypeOf(Variant::Type::STRING)){
+		auto &str = const_cast<Variant &>(obj).toString();
+		sqlite3_bind_text(inStmt, toColumn, str.c_str(), str.size(), SQLITE_STATIC);
+	} else {
+#define _STR(x) #x
+		switch (obj.getType())
+		{
+		case FMDB_CPP::Variant::Type::BOOLEAN: sqlite3_bind_int(inStmt, toColumn, obj.toBool());
+			break;
+		case FMDB_CPP::Variant::Type::CHAR: sqlite3_bind_int(inStmt, toColumn, obj.toChar());
+			break;
+		case FMDB_CPP::Variant::Type::BYTE: sqlite3_bind_int(inStmt, toColumn, obj.toByte());
+			break;
+		case FMDB_CPP::Variant::Type::INTEGER: sqlite3_bind_int(inStmt, toColumn, obj.toInt());
+			break;
+		case FMDB_CPP::Variant::Type::UINTEGER: sqlite3_bind_int(inStmt, toColumn, obj.toUInt());
+			break;
+		case FMDB_CPP::Variant::Type::FLOAT: sqlite3_bind_double(inStmt, toColumn, obj.toFloat());
+			break;
+		case FMDB_CPP::Variant::Type::DOUBLE: sqlite3_bind_double(inStmt, toColumn, obj.toDouble());
+			break;
+		case FMDB_CPP::Variant::Type::LONGLONG: sqlite3_bind_int64(inStmt, toColumn, obj.toLongLong());
+			break;
+		case FMDB_CPP::Variant::Type::ULONGLONG: sqlite3_bind_int64(inStmt, toColumn, obj.toULongLong());
+			break;
+		case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+		case FMDB_CPP::Variant::Type::VARIANTMAP:
+		case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY: 
+			fprintf(stderr, "Don't support (%s, %s, %s) to write to sqlite.\n", _STR(VariantVector), _STR(VariantMap), _STR(VariantMapIntKey));
+			assert(0);
+			break;
+// 		default:
+// 			break;
+		}
+#undef _STR
+	}
 }
 
-template <>
-void bindObject<sqlite3_int64>(sqlite3_int64 obj, int toColumn, sqlite3_stmt *stmt) {
-    sqlite3_bind_int64(stmt, toColumn, obj);
+bool FMDatabase::executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, FMStatement *&statement)
+{
+	if (!databaseExists()) {
+		return false;
+	}
+	if (_isExecutingStatement) {
+		warnInUse();
+		return false;
+	}
+	_isExecutingStatement = true;
+
+	if (_traceExecution) {
+		fprintf(stdout, "<%p> executeQuery:%s\n", this, sql.c_str());
+	}
+	if (_shouldCacheStatements) {
+		statement = cachedStatementForQuery(sql);
+		if (statement) {
+			pStmt = statement->getStatement();
+			statement->reset();
+		}
+	}
+	if (!pStmt) {
+		int rc = sqlite3_prepare_v2(_db, sql.c_str(), -1, &pStmt, 0);
+		if (rc != SQLITE_OK) {
+			if (_logsErrors) {
+				fprintf(stdout, "DB Error:%d, \"%s\"\n", lastErrorCode(), lastErrorMessage().c_str());
+				fprintf(stdout, "DB Query:%s\n", sql.c_str());
+				fprintf(stdout, "DB Path:%s\n", _databasePath.c_str());
+			}
+			if (_crashOnErrors) {
+				fprintf(stderr, "DB Error:%d, \"%s\"\n", lastErrorCode(), lastErrorMessage().c_str());
+				abort();
+			}
+			sqlite3_finalize(pStmt);
+			_isExecutingStatement = false;
+			return false;
+		}
+	}
+	return true;
 }
 
-template <>
-void bindObject<double>(double obj, int toColumn, sqlite3_stmt *stmt) {
-    sqlite3_bind_double(stmt, toColumn, obj);
+bool FMDatabase::executeQueryParametersCheck(int inputParametersCount, sqlite3_stmt * pStmt)
+{
+	int bindCount = sqlite3_bind_parameter_count(pStmt);
+	if (inputParametersCount != bindCount) {
+		fprintf(stderr, "Error: the bind count(%d) is not correct for the # of variables (executeQuery:%d)\n", inputParametersCount, bindCount);
+		sqlite3_finalize(pStmt);
+		_isExecutingStatement = false;
+		return false;
+	}
+	return true;
 }
 
-template <>
-void bindObject<float>(float obj, int toColumn, sqlite3_stmt *stmt) {
-    sqlite3_bind_double(stmt, toColumn, obj);
-}
+FMResultSet * FMDatabase::executeQueryImpl(const string & sql, FMStatement *statement, sqlite3_stmt *pStmt)
+{
+	if (!statement) {
+		statement = new FMStatement();
+		statement->setStatement(pStmt);
 
-template <>
-void bindObject<const string&>(const string &obj, int toColumn, sqlite3_stmt *stmt) {
-    sqlite3_bind_text(stmt, toColumn, obj.c_str(), -1, SQLITE_STATIC);
-}
+		if (_shouldCacheStatements) {
+			setCachedStatement(statement, sql);
+		}
+	}
 
-template <>
-void bindObject<const vector<unsigned char>&>(const vector<unsigned char> &obj, int toColumn, sqlite3_stmt *stmt) {
-    const void *bytes = obj.data();
-    int length = (int)obj.size();
-    if (!bytes) {
-        bytes = "";
-        length = 0;
-    }
-    sqlite3_bind_blob(stmt, toColumn, bytes, length, SQLITE_STATIC);
-}
+	// the statement gets closed in rs's dealloc or [rs close];
+	FMResultSet *rs = FMResultSet::resultSet(statement, this);
+	rs->setQuery(sql);
 
-template <>
-void bindObject<Date> (Date obj, int toColumn, sqlite3_stmt *stmt) {
-    auto str = obj.description().c_str();
-    assert(str);
-    sqlite3_bind_text(stmt, toColumn, str, -1, SQLITE_STATIC);
+	_openResultSets->insert(rs);
+	statement->setUseCount(statement->getUseCount() + 1);
+
+	_isExecutingStatement = false;
+
+	return rs;
 }
 
 FMDB_END

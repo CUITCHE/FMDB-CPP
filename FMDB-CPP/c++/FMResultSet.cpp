@@ -32,11 +32,15 @@ FMResultSet *FMResultSet::resultSet(FMStatement *statement, FMDatabase *parentDa
 
 void FMResultSet::close()
 {
-	_statement->reset();
-	_statement = nullptr;
+	if (_statement)	 {
+		_statement->reset();
+		_statement = nullptr;
+	}
 
-	_parentDB->resultSetDidClose(this);
-	_parentDB = nullptr;
+	if (_parentDB) {
+		_parentDB->resultSetDidClose(this);
+		_parentDB = nullptr;
+	}
 }
 
 bool FMResultSet::next()

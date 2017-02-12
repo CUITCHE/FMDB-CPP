@@ -16,6 +16,8 @@ using namespace std;
 
 FMDB_BEGIN
 
+const Variant Variant::null;
+
 Variant::Variant()
 :_type(Type::NONE)
 {
@@ -452,7 +454,7 @@ string Variant::toString() const
 {
 	assert(convert(Type::STRING));
 	if (_type == Type::STRING) {
-		return *(string *)_field.object;
+		return *static_cast<string *>(_field.object);
 	}
 	stringstream ss;
 	switch (_type)
@@ -499,6 +501,12 @@ const Date& Variant::toDate() const
 {
 	assert(convert(Type::DATE));
 	return *static_cast<const Date *>(_field.object);
+}
+
+const string& Variant::toString()
+{
+	assert(_type == Type::STRING);
+	return *static_cast<const string *>(_field.object);
 }
 
 VariantVector & Variant::toVariantVector()
