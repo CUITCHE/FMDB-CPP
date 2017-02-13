@@ -11,6 +11,6 @@
 
 #include "FMDatabase.h"
 #include "FMResultSet.h"
-#include "FMDatabasePool.h"
+#include "FMDatabaseQueue.h"
 
 #endif /* FMDB_h */

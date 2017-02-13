@@ -113,7 +113,7 @@ public:
      @note DON'T release the return value.
 	 */
 	template<typename... Args>
-	DON_NOT_RELEASE(FMResultSet *)executeQuery(const string &sql, Args... args);
+	DO_NOT_RELEASE(FMResultSet *)executeQuery(const string &sql, Args... args);
 
 	/**
 	 Execute single update statement

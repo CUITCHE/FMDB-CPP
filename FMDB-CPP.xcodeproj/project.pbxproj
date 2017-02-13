@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
 		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
-		FB88CB181E4C4600005EEECD /* FMDatabasePool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */; };
+		FB88CB181E4C4600005EEECD /* FMDatabaseQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */; };
 		FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB131E4C4600005EEECD /* FMResultSet.cpp */; };
 		FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
 		FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
@@ -34,8 +34,8 @@
 		FB88CB061E4C45E8005EEECD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabase.cpp; sourceTree = "<group>"; };
 		FB88CB0F1E4C4600005EEECD /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
-		FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabasePool.cpp; sourceTree = "<group>"; };
-		FB88CB111E4C4600005EEECD /* FMDatabasePool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabasePool.h; sourceTree = "<group>"; };
+		FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabaseQueue.cpp; sourceTree = "<group>"; };
+		FB88CB111E4C4600005EEECD /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseQueue.h; sourceTree = "<group>"; };
 		FB88CB121E4C4600005EEECD /* FMDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDB.h; sourceTree = "<group>"; };
 		FB88CB131E4C4600005EEECD /* FMResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMResultSet.cpp; sourceTree = "<group>"; };
 		FB88CB141E4C4600005EEECD /* FMResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMResultSet.h; sourceTree = "<group>"; };
@@ -93,8 +93,8 @@
 				FB88CB121E4C4600005EEECD /* FMDB.h */,
 				FB88CB0F1E4C4600005EEECD /* FMDatabase.h */,
 				FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */,
-				FB88CB111E4C4600005EEECD /* FMDatabasePool.h */,
-				FB88CB101E4C4600005EEECD /* FMDatabasePool.cpp */,
+				FB88CB111E4C4600005EEECD /* FMDatabaseQueue.h */,
+				FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */,
 				FB88CB141E4C4600005EEECD /* FMResultSet.h */,
 				FB88CB131E4C4600005EEECD /* FMResultSet.cpp */,
 				FB88CB161E4C4600005EEECD /* FMStatement.hpp */,
@@ -174,7 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB88CB181E4C4600005EEECD /* FMDatabasePool.cpp in Sources */,
+				FB88CB181E4C4600005EEECD /* FMDatabaseQueue.cpp in Sources */,
 				FB8D2D8E1E4DBB380060F9F3 /* Variant.cpp in Sources */,
 				FB88CB071E4C45E8005EEECD /* main.cpp in Sources */,
 				FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */,
