@@ -29,33 +29,33 @@ public:
 	static const Variant null;
     Variant();
 
-    explicit Variant(bool v);
-    explicit Variant(char v);
-    explicit Variant(unsigned char v);
-    explicit Variant(int v);
-    explicit Variant(unsigned int v);
-    explicit Variant(float v);
-    explicit Variant(double v);
-    explicit Variant(long long v);
-    explicit Variant(unsigned long long v);
+    Variant(bool v);
+    Variant(char v);
+    Variant(unsigned char v);
+    Variant(int v);
+    Variant(unsigned int v);
+    Variant(float v);
+    Variant(double v);
+    Variant(long long v);
+    Variant(unsigned long long v);
 
-    explicit Variant(const VariantData &v);
-    explicit Variant(VariantData &&v);
+    Variant(const VariantData &v);
+    Variant(VariantData &&v);
 
-    explicit Variant(const Date &v);
+    Variant(const Date &v);
 
-    explicit Variant(const char *v);
-    explicit Variant(const string &v);
-    explicit Variant(string &&v);
+    Variant(const char *v);
+    Variant(const string &v);
+    Variant(string &&v);
 
-    explicit Variant(const VariantVector &v);
-    explicit Variant(VariantVector &&v);
+    Variant(const VariantVector &v);
+    Variant(VariantVector &&v);
 
-    explicit Variant(const VariantMap &v);
-    explicit Variant(VariantMap &&v);
+    Variant(const VariantMap &v);
+    Variant(VariantMap &&v);
 
-    explicit Variant(const VariantMapIntKey &v);
-    explicit Variant(VariantMapIntKey &&v);
+    Variant(const VariantMapIntKey &v);
+    Variant(VariantMapIntKey &&v);
 
 	Variant(const Variant &other);
 	Variant(Variant &&other);

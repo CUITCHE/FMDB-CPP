@@ -105,8 +105,12 @@ Variant::Variant(const Date &v)
 Variant::Variant(const char *v)
 :_type(Type::STRING)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
-    _field.object = d;
+    if (v) {
+        auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+        _field.object = d;
+    } else {
+        _type = Type::NONE;
+    }
 }
 
 Variant::Variant(const string &v)

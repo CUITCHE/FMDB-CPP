@@ -41,9 +41,9 @@ using TimeInterval = std::chrono::duration<double>;
 
 #ifdef DEBUG
 
-#define ____fn____ __PRETTY_FUNCTION__
+# define ____fn____ __PRETTY_FUNCTION__
 
-#define _assert(cond, desc, ...) \
+# define _assert(cond, desc, ...) \
     do {\
         if (!(cond)) {\
             fprintf(stderr, "*** Assertion failure in [%s], %s:%d => ('%s')", ____fn____, __FILE__, __LINE__, #cond);\
@@ -55,9 +55,11 @@ using TimeInterval = std::chrono::duration<double>;
             abort();\
         }\
     } while (0)
+# define parameterAssert(cond) _assert((cond), "Invalid parameter not satisfying: %s", #cond)
 #else
-#define _assert(cond, desc, ...) do {} while(0)
-#endif
+# define _assert(cond, desc, ...)
+# define parameterAssert(c)
+#endif // DEBUG
 
 #ifndef __PL64__
 # ifdef WIN32
@@ -72,6 +74,10 @@ using TimeInterval = std::chrono::duration<double>;
 #  define __PL64__ __LP64__
 # endif
 #endif // __PL64__
+
+#ifndef DO_NOT_RELEASE
+#define DO_NOT_RELEASE(t) t
+#endif // DON_NOT_RELEASE
 
 FMDB_END
 
