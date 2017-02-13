@@ -90,6 +90,7 @@ void FMDatabaseQueue::exec()
     int taskExecutedCount = 0;
     while (!_packet->_stop) {
         if (_packet->_tasks->empty()) {
+            taskExecutedCount = 0;
             this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
