@@ -106,7 +106,7 @@ Variant::Variant(const char *v)
 :_type(Type::STRING)
 {
     if (v) {
-        auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+        auto d = new (nothrow) string(v);
         _field.object = d;
     } else {
         _type = Type::NONE;
@@ -454,7 +454,7 @@ unsigned long long Variant::toULongLong() const
 	return static_cast<unsigned long long>(toLongLong());
 }
 
-string Variant::toString() const
+string Variant::toString()
 {
 	_assert(convert(Type::STRING), "Can't convert to string");
 	if (_type == Type::STRING) {
@@ -507,7 +507,7 @@ const Date& Variant::toDate() const
 	return *static_cast<const Date *>(_field.object);
 }
 
-string& Variant::toString()
+string& Variant::toString() const
 {
 	_assert(_type == Type::STRING, "Can't convert to string.");
 	return *static_cast<string *>(_field.object);

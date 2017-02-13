@@ -114,11 +114,11 @@ public:
     double toDouble() const;
     long long toLongLong() const;
     unsigned long long toULongLong() const;
-    string toString() const;
+    string toString();
 	const Date& toDate() const;
     
 	/** Return stored string object if type is STRING, otherwise will trigger error. */
-	string& toString();
+	string& toString() const;
 
 	VariantVector& toVariantVector();
 	const VariantVector& toVariantVector() const;

@@ -50,10 +50,10 @@ bool FMResultSet::next()
 
 bool FMResultSet::nextWithError(void **error)
 {
-	int rc = sqlite3_step(_statement->getStatement());
+    int rc = sqlite3_step(_statement ? _statement->getStatement() : nullptr);
 
 	if (SQLITE_BUSY == rc || SQLITE_LOCKED == rc) {
-		fprintf(stderr, "%s:%d Database busy(%s)", __FUNCTION__, __LINE__, _parentDB->databasePath().c_str());
+        fprintf(stderr, "%s:%d Database busy(%s)", __FUNCTION__, __LINE__, _parentDB ? _parentDB->databasePath().c_str() : 0);
 		fprintf(stderr, "Database busy");
 // 		if (outErr) {
 // 			*outErr = [_parentDB lastError];
@@ -62,13 +62,13 @@ bool FMResultSet::nextWithError(void **error)
 	else if (SQLITE_DONE == rc || SQLITE_ROW == rc) {
 		// all is well, let's return.
 	} else if (SQLITE_ERROR == rc) {
-		fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB->sqliteHandle()));
+        fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
 // 		if (outErr) {
 // 			*outErr = [_parentDB lastError];
 // 		}
 	} else if (SQLITE_MISUSE == rc) {
 		// uh oh.
-		fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB->sqliteHandle()));
+        fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
 // 		if (outErr) {
 // 			if (_parentDB) {
 // 				*outErr = [_parentDB lastError];
@@ -81,7 +81,7 @@ bool FMResultSet::nextWithError(void **error)
 // 		}
 	} else {
 		// wtf?
-		fprintf(stderr, "Unknown error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB->sqliteHandle()));
+        fprintf(stderr, "Unknown error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
 // 		if (outErr) {
 // 			*outErr = [_parentDB lastError];
 // 		}

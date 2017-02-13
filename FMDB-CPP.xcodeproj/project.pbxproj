@@ -15,6 +15,15 @@
 		FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
 		FB8D2D891E4D82B70060F9F3 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
 		FB8D2D8E1E4DBB380060F9F3 /* Variant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */; };
+		FBA2F82D1E51BB9700589450 /* FMDBTempDBTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */; };
+		FBA2F82F1E51BBD500589450 /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
+		FBA2F8301E51BBD500589450 /* FMDatabaseQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */; };
+		FBA2F8311E51BBD500589450 /* FMResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB131E4C4600005EEECD /* FMResultSet.cpp */; };
+		FBA2F8321E51BBD500589450 /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
+		FBA2F8331E51BBD500589450 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
+		FBA2F8341E51BBD500589450 /* Variant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */; };
+		FBA2F8351E51BFDC00589450 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
+		FBA2F8371E51C05400589450 /* FMResultSetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBA2F8361E51C05400589450 /* FMResultSetTests.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +56,11 @@
 		FB8D2D881E4D82B70060F9F3 /* Date.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Date.hpp; sourceTree = "<group>"; };
 		FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Variant.cpp; sourceTree = "<group>"; };
 		FB8D2D8D1E4DBB380060F9F3 /* Variant.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Variant.hpp; sourceTree = "<group>"; };
+		FBA2F8241E51BB4E00589450 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FBA2F8281E51BB4E00589450 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDBTempDBTests.mm; sourceTree = "<group>"; };
+		FBA2F82E1E51BBB100589450 /* FMDBTempDBTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDBTempDBTests.h; sourceTree = "<group>"; };
+		FBA2F8361E51C05400589450 /* FMResultSetTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMResultSetTests.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +72,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FBA2F8211E51BB4E00589450 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBA2F8351E51BFDC00589450 /* libsqlite3.0.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -65,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				FB88CB051E4C45E8005EEECD /* FMDB-CPP */,
+				FBA2F8251E51BB4E00589450 /* Tests */,
 				FB88CB041E4C45E8005EEECD /* Products */,
 				FB88CB1B1E4C4777005EEECD /* Frameworks */,
 			);
@@ -74,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				FB88CB031E4C45E8005EEECD /* FMDB-CPP */,
+				FBA2F8241E51BB4E00589450 /* Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -116,6 +140,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		FBA2F8251E51BB4E00589450 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				FBA2F8281E51BB4E00589450 /* Info.plist */,
+				FBA2F82E1E51BBB100589450 /* FMDBTempDBTests.h */,
+				FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */,
+				FBA2F8361E51C05400589450 /* FMResultSetTests.mm */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -136,6 +171,23 @@
 			productReference = FB88CB031E4C45E8005EEECD /* FMDB-CPP */;
 			productType = "com.apple.product-type.tool";
 		};
+		FBA2F8231E51BB4E00589450 /* Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBA2F8291E51BB4E00589450 /* Build configuration list for PBXNativeTarget "Tests" */;
+			buildPhases = (
+				FBA2F8201E51BB4E00589450 /* Sources */,
+				FBA2F8211E51BB4E00589450 /* Frameworks */,
+				FBA2F8221E51BB4E00589450 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Tests;
+			productName = Tests;
+			productReference = FBA2F8241E51BB4E00589450 /* Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -146,6 +198,11 @@
 				ORGANIZATIONNAME = CHE;
 				TargetAttributes = {
 					FB88CB021E4C45E8005EEECD = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 8652TQR753;
+						ProvisioningStyle = Automatic;
+					};
+					FBA2F8231E51BB4E00589450 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 8652TQR753;
 						ProvisioningStyle = Automatic;
@@ -165,9 +222,20 @@
 			projectRoot = "";
 			targets = (
 				FB88CB021E4C45E8005EEECD /* FMDB-CPP */,
+				FBA2F8231E51BB4E00589450 /* Tests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FBA2F8221E51BB4E00589450 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		FB88CAFF1E4C45E8005EEECD /* Sources */ = {
@@ -181,6 +249,21 @@
 				FB8D2D891E4D82B70060F9F3 /* Date.cpp in Sources */,
 				FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */,
 				FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBA2F8201E51BB4E00589450 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBA2F82D1E51BB9700589450 /* FMDBTempDBTests.mm in Sources */,
+				FBA2F8341E51BBD500589450 /* Variant.cpp in Sources */,
+				FBA2F8301E51BBD500589450 /* FMDatabaseQueue.cpp in Sources */,
+				FBA2F8321E51BBD500589450 /* FMStatement.cpp in Sources */,
+				FBA2F8331E51BBD500589450 /* Date.cpp in Sources */,
+				FBA2F8311E51BBD500589450 /* FMResultSet.cpp in Sources */,
+				FBA2F8371E51C05400589450 /* FMResultSetTests.mm in Sources */,
+				FBA2F82F1E51BBD500589450 /* FMDatabase.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +373,30 @@
 			};
 			name = Release;
 		};
+		FBA2F82A1E51BB4E00589450 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8652TQR753;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hejunqiu.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FBA2F82B1E51BB4E00589450 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8652TQR753;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.hejunqiu.Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -310,6 +417,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		FBA2F8291E51BB4E00589450 /* Build configuration list for PBXNativeTarget "Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBA2F82A1E51BB4E00589450 /* Debug */,
+				FBA2F82B1E51BB4E00589450 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

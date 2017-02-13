@@ -21,10 +21,11 @@ class Date {
 public:
 
     explicit Date(system_clock::time_point);
+
     /**
      Creates and returns a new date set to the current date and time.
      */
-    explicit Date();
+    Date();
 
     /**
      Creates and returns an NSDate object set to a given number of seconds from 00:00:00 UTC on 1 January 2001.

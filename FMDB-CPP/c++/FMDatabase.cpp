@@ -229,6 +229,10 @@ void FMDatabase::clearCachedStatements()
 
 FMStatement *FMDatabase::cachedStatementForQuery(const string &query)
 {
+    auto iter = _cachedStatements->find(query);
+    if (iter == _cachedStatements->end()) {
+        return nullptr;
+    }
     auto &statements = _cachedStatements->at(query);
     FMStatement *st = nullptr;
     for (auto tmp : statements) {
@@ -416,7 +420,7 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
         sqlite3_bind_text(inStmt, toColumn, dateString.c_str(), (int)dateString.size(), SQLITE_STATIC);
 #endif
 	} else if (obj.isTypeOf(Variant::Type::STRING)){
-		auto &str = const_cast<Variant &>(obj).toString();
+		auto &str = obj.toString();
 		sqlite3_bind_text(inStmt, toColumn, str.c_str(), (int)str.size(), SQLITE_STATIC);
 	} else {
 #define _STR(x) #x
