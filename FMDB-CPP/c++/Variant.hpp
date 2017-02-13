@@ -21,7 +21,7 @@ class Date;
 using VariantVector		= std::vector<Variant>;
 using VariantMap		= std::unordered_map<std::string, Variant>;
 using VariantMapIntKey	= std::unordered_map<int, Variant>;
-using VariantData		= vector<unsigned char>;
+using VariantData		= std::vector<unsigned char>;
 
 class Variant
 {
@@ -118,7 +118,7 @@ public:
 	const Date& toDate() const;
     
 	/** Return stored string object if type is STRING, otherwise will trigger error. */
-	const string& toString();
+	string& toString();
 
 	VariantVector& toVariantVector();
 	const VariantVector& toVariantVector() const;

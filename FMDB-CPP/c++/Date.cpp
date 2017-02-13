@@ -7,7 +7,6 @@
 //
 
 #include "Date.hpp"
-#include <cassert>
 
 FMDB_BEGIN
 
@@ -96,8 +95,7 @@ Date Date::dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate)
 
 void strptime(const char *buf, const char *format, struct tm *tm)
 {
-	assert(format == FMDB_CPP_DATE_FORMAT);
-	assert(0);
+	_assert(format == FMDB_CPP_DATE_FORMAT, "TODO:");
 	// TODO:
 }
 

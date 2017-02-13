@@ -7,9 +7,9 @@
 //
 
 #include "Variant.hpp"
-#include <cassert>
 #include <sstream>
 #include <iomanip>
+#include <cfloat>
 #include "Date.hpp"
 
 using namespace std;
@@ -199,43 +199,43 @@ bool Variant::convert(Type toType) const
 
 bool Variant::toBool() const
 {
-    assert(convert(Type::BOOLEAN));
+    _assert(convert(Type::BOOLEAN), "Can't convert to boolea");
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN:return _field.boolVal;
+	case Type::BOOLEAN:return _field.boolVal;
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: return !!_field.charVal;
+	case Type::CHAR: return !!_field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: return !!_field.byteVal;
+	case Type::BYTE: return !!_field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: return !!_field.intVal;
+	case Type::INTEGER: return !!_field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: return !!_field.unsignedVal;
+	case Type::UINTEGER: return !!_field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: return !(_field.floatVal == 0);
+	case Type::FLOAT: return !(_field.floatVal == 0);
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: return !(_field.doubleVal == 0);
+	case Type::DOUBLE: return !(_field.doubleVal == 0);
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: return !(_field.longLongVal == 0);
+	case Type::LONGLONG: return !(_field.longLongVal == 0);
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: return !(_field.unsignedLongLongVal == 0);
+	case Type::ULONGLONG: return !(_field.unsignedLongLongVal == 0);
 		break;
-	case FMDB_CPP::Variant::Type::STRING: {
+	case Type::STRING: {
 		const string &str = *(const string *)_field.object;
 		return !(str == "0" || str == "false");
 	}
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -245,43 +245,43 @@ bool Variant::toBool() const
 
 char Variant::toChar() const
 {
-    assert(convert(Type::CHAR));
+    _assert(convert(Type::CHAR), "Can't convert to char.");
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN: return static_cast<char>(_field.boolVal);
+	case Type::BOOLEAN: return static_cast<char>(_field.boolVal);
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: return _field.charVal;
+	case Type::CHAR: return _field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: return _field.byteVal;
+	case Type::BYTE: return _field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: return _field.intVal;
+	case Type::INTEGER: return _field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: return _field.unsignedVal;
+	case Type::UINTEGER: return _field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: return static_cast<char>(_field.floatVal);
+	case Type::FLOAT: return static_cast<char>(_field.floatVal);
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: return static_cast<char>(_field.doubleVal);
+	case Type::DOUBLE: return static_cast<char>(_field.doubleVal);
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: return static_cast<char>(_field.longLongVal);
+	case Type::LONGLONG: return static_cast<char>(_field.longLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: return static_cast<char>(_field.unsignedLongLongVal);
+	case Type::ULONGLONG: return static_cast<char>(_field.unsignedLongLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::STRING: {
+	case Type::STRING: {
 		const string &str = *(const string *)_field.object;
 		return static_cast<char>(atoi(str.c_str()));
 	}
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -296,43 +296,43 @@ unsigned char Variant::toByte() const
 
 int Variant::toInt() const
 {
-	assert(convert(Type::INTEGER));
+	_assert(convert(Type::INTEGER), "Can't convert to integer.");
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN: return static_cast<int>(_field.boolVal);
+	case Type::BOOLEAN: return static_cast<int>(_field.boolVal);
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: return _field.charVal;
+	case Type::CHAR: return _field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: return _field.byteVal;
+	case Type::BYTE: return _field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: return _field.intVal;
+	case Type::INTEGER: return _field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: return _field.unsignedVal;
+	case Type::UINTEGER: return _field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: return static_cast<int>(_field.floatVal);
+	case Type::FLOAT: return static_cast<int>(_field.floatVal);
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: return static_cast<int>(_field.doubleVal);
+	case Type::DOUBLE: return static_cast<int>(_field.doubleVal);
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: return static_cast<int>(_field.longLongVal);
+	case Type::LONGLONG: return static_cast<int>(_field.longLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: return static_cast<int>(_field.unsignedLongLongVal);
+	case Type::ULONGLONG: return static_cast<int>(_field.unsignedLongLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::STRING: {
+	case Type::STRING: {
 		const string &str = *(const string *)_field.object;
 		return static_cast<int>(atoi(str.c_str()));
 	}
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -342,55 +342,55 @@ int Variant::toInt() const
 
 unsigned int Variant::toUInt() const
 {
-	assert(convert(Type::UINTEGER));
+	_assert(convert(Type::UINTEGER), "Can't convert to unsigned integer.");
 	return static_cast<unsigned int>(toInt());
 }
 
 float Variant::toFloat() const
 {
-	assert(convert(Type::FLOAT));
+	_assert(convert(Type::FLOAT), "Can't convert to float.");
 	return static_cast<float>(toDouble());
 }
 
 double Variant::toDouble() const
 {
-	assert(convert(Type::DOUBLE));
+	_assert(convert(Type::DOUBLE), "Can't convert to double.");
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN: return static_cast<double>(_field.boolVal);
+	case Type::BOOLEAN: return static_cast<double>(_field.boolVal);
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: return _field.charVal;
+	case Type::CHAR: return _field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: return _field.byteVal;
+	case Type::BYTE: return _field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: return _field.intVal;
+	case Type::INTEGER: return _field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: return _field.unsignedVal;
+	case Type::UINTEGER: return _field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: return static_cast<double>(_field.floatVal);
+	case Type::FLOAT: return static_cast<double>(_field.floatVal);
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: return static_cast<double>(_field.doubleVal);
+	case Type::DOUBLE: return static_cast<double>(_field.doubleVal);
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: return static_cast<double>(_field.longLongVal);
+	case Type::LONGLONG: return static_cast<double>(_field.longLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: return static_cast<double>(_field.unsignedLongLongVal);
+	case Type::ULONGLONG: return static_cast<double>(_field.unsignedLongLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::STRING: {
+	case Type::STRING: {
 		const string &str = *(const string *)_field.object;
 		return static_cast<double>(atof(str.c_str()));
 	}
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -400,43 +400,43 @@ double Variant::toDouble() const
 
 long long Variant::toLongLong() const
 {
-	assert(convert(Type::LONGLONG));
+	_assert(convert(Type::LONGLONG), "Can't convert to long long.");
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN: return static_cast<long long>(_field.boolVal);
+	case Type::BOOLEAN: return static_cast<long long>(_field.boolVal);
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: return _field.charVal;
+	case Type::CHAR: return _field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: return _field.byteVal;
+	case Type::BYTE: return _field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: return _field.intVal;
+	case Type::INTEGER: return _field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: return _field.unsignedVal;
+	case Type::UINTEGER: return _field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: return static_cast<long long>(_field.floatVal);
+	case Type::FLOAT: return static_cast<long long>(_field.floatVal);
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: return static_cast<long long>(_field.doubleVal);
+	case Type::DOUBLE: return static_cast<long long>(_field.doubleVal);
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: return static_cast<long long>(_field.longLongVal);
+	case Type::LONGLONG: return static_cast<long long>(_field.longLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: return static_cast<long long>(_field.unsignedLongLongVal);
+	case Type::ULONGLONG: return static_cast<long long>(_field.unsignedLongLongVal);
 		break;
-	case FMDB_CPP::Variant::Type::STRING: {
+	case Type::STRING: {
 		const string &str = *(const string *)_field.object;
 		return static_cast<long long>(atoll(str.c_str()));
 	}
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -446,50 +446,50 @@ long long Variant::toLongLong() const
 
 unsigned long long Variant::toULongLong() const
 {
-	assert(convert(Type::ULONGLONG));
+	_assert(convert(Type::ULONGLONG), "Can't convert to unsigned long long.");
 	return static_cast<unsigned long long>(toLongLong());
 }
 
 string Variant::toString() const
 {
-	assert(convert(Type::STRING));
+	_assert(convert(Type::STRING), "Can't convert to string");
 	if (_type == Type::STRING) {
 		return *static_cast<string *>(_field.object);
 	}
 	stringstream ss;
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN: ss << (_field.boolVal ? "true" : "false");
+	case Type::BOOLEAN: ss << (_field.boolVal ? "true" : "false");
 		break;
-	case FMDB_CPP::Variant::Type::CHAR: ss << _field.charVal;
+	case Type::CHAR: ss << _field.charVal;
 		break;
-	case FMDB_CPP::Variant::Type::BYTE: ss << _field.byteVal;
+	case Type::BYTE: ss << _field.byteVal;
 		break;
-	case FMDB_CPP::Variant::Type::INTEGER: ss << _field.intVal;
+	case Type::INTEGER: ss << _field.intVal;
 		break;
-	case FMDB_CPP::Variant::Type::UINTEGER: ss << _field.unsignedVal;
+	case Type::UINTEGER: ss << _field.unsignedVal;
 		break;
-	case FMDB_CPP::Variant::Type::FLOAT: ss << _field.floatVal;
+	case Type::FLOAT: ss << _field.floatVal;
 		break;
-	case FMDB_CPP::Variant::Type::DOUBLE: ss << _field.doubleVal;
+	case Type::DOUBLE: ss << _field.doubleVal;
 		break;
-	case FMDB_CPP::Variant::Type::LONGLONG: ss << _field.longLongVal;
+	case Type::LONGLONG: ss << _field.longLongVal;
 		break;
-	case FMDB_CPP::Variant::Type::ULONGLONG: ss << _field.unsignedLongLongVal;
+	case Type::ULONGLONG: ss << _field.unsignedLongLongVal;
 		break;
-	case FMDB_CPP::Variant::Type::STRING:
+	case Type::STRING:
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP:
+	case Type::VARIANTMAP:
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+	case Type::VARIANTMAPINTKEY:
 		break;
 	default:
 		break;
@@ -499,62 +499,58 @@ string Variant::toString() const
 
 const Date& Variant::toDate() const
 {
-	assert(convert(Type::DATE));
+	_assert(convert(Type::DATE), "Can't convert to Date.");
 	return *static_cast<const Date *>(_field.object);
 }
 
-const string& Variant::toString()
+string& Variant::toString()
 {
-	assert(_type == Type::STRING);
-	return *static_cast<const string *>(_field.object);
+	_assert(_type == Type::STRING, "Can't convert to string.");
+	return *static_cast<string *>(_field.object);
 }
 
 VariantVector & Variant::toVariantVector()
 {
-	assert(convert(Type::VARIANTVECTOR));
+	_assert(convert(Type::VARIANTVECTOR), "Can't convert to VariantVector(std::vector<Variant>).");
 	return *static_cast<VariantVector *>(_field.object);
 }
 
 const VariantVector & Variant::toVariantVector() const
 {
-	assert(convert(Type::VARIANTVECTOR));
-	return *static_cast<const VariantVector *>(_field.object);
+    return const_cast<Variant *>(this)->toVariantVector();
 }
 
 VariantMap & Variant::toVariantMap()
 {
-	assert(convert(Type::VARIANTMAP));
+	_assert(convert(Type::VARIANTMAP), "Can't convert to VariantMap(std::unordered_map<std::string, Variant>).");
 	return *static_cast<VariantMap *>(_field.object);
 }
 
 const VariantMap & Variant::toVariantMap() const
 {
-	assert(convert(Type::VARIANTMAP));
-	return *static_cast<const VariantMap *>(_field.object);
+    return const_cast<Variant *>(this)->toVariantMap();
 }
 
 VariantMapIntKey & Variant::toVariantMapIntKey()
 {
-	assert(convert(Type::VARIANTMAPINTKEY));
+	_assert(convert(Type::VARIANTMAPINTKEY), "Can't convert to VariantMapIntKey(std::unordered_map<int, Variant>).");
 	return *static_cast<VariantMapIntKey *>(_field.object);
 }
 
 const VariantMapIntKey & Variant::toVariantMapIntKey() const
 {
-	assert(convert(Type::VARIANTMAPINTKEY));
-	return *static_cast<const VariantMapIntKey *>(_field.object);
+	return const_cast<Variant *>(this)->toVariantMapIntKey();
 }
 
 VariantData & Variant::toVariantData()
 {
-	assert(convert(Type::DATA));
+	_assert(convert(Type::DATA) ,"Can't convert to VariantData(std::vector<unsigned char>)");
 	return *static_cast<VariantData *>(_field.object);
 }
 
 const VariantData & Variant::toVariantData() const
 {
-	assert(convert(Type::DATA));
-	return *static_cast<const VariantData *>(_field.object);
+	return const_cast<Variant *>(this)->toVariantData();
 }
 
 Variant & Variant::operator=(const Variant & other)
@@ -562,20 +558,20 @@ Variant & Variant::operator=(const Variant & other)
 	if (this != &other) {
 		reset(other._type);
 		switch (_type) {
-		case FMDB_CPP::Variant::Type::NONE:
+		case Type::NONE:
 			break;
-		case FMDB_CPP::Variant::Type::BOOLEAN:
-		case FMDB_CPP::Variant::Type::CHAR:
-		case FMDB_CPP::Variant::Type::BYTE:
-		case FMDB_CPP::Variant::Type::INTEGER:
-		case FMDB_CPP::Variant::Type::UINTEGER:
-		case FMDB_CPP::Variant::Type::FLOAT:
-		case FMDB_CPP::Variant::Type::DOUBLE:
-		case FMDB_CPP::Variant::Type::LONGLONG:
-		case FMDB_CPP::Variant::Type::ULONGLONG:
+		case Type::BOOLEAN:
+		case Type::CHAR:
+		case Type::BYTE:
+		case Type::INTEGER:
+		case Type::UINTEGER:
+		case Type::FLOAT:
+		case Type::DOUBLE:
+		case Type::LONGLONG:
+		case Type::ULONGLONG:
 			_field.unsignedLongLongVal = other._field.unsignedLongLongVal;
 			break;
-		case FMDB_CPP::Variant::Type::STRING:
+		case Type::STRING:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) string(*static_cast<string *>(other._field.object));
 			} else {
@@ -583,7 +579,7 @@ Variant & Variant::operator=(const Variant & other)
 				v = *static_cast<string *>(other._field.object);
 			}
 			break;
-		case FMDB_CPP::Variant::Type::DATA:
+		case Type::DATA:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) VariantData (*static_cast<VariantData *>(other._field.object));
 			} else {
@@ -591,7 +587,7 @@ Variant & Variant::operator=(const Variant & other)
 				v = *static_cast<VariantData *>(other._field.object);
 			}
 			break;
-		case FMDB_CPP::Variant::Type::DATE:
+		case Type::DATE:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) VariantData(*static_cast<VariantData *>(other._field.object));
 			}
@@ -600,7 +596,7 @@ Variant & Variant::operator=(const Variant & other)
 				v = *static_cast<VariantData *>(other._field.object);
 			}
 			break;
-		case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+		case Type::VARIANTVECTOR:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) VariantVector(*static_cast<VariantVector *>(other._field.object));
 			}
@@ -609,7 +605,7 @@ Variant & Variant::operator=(const Variant & other)
 				v = *static_cast<VariantVector *>(other._field.object);
 			}
 			break;
-		case FMDB_CPP::Variant::Type::VARIANTMAP:
+		case Type::VARIANTMAP:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) VariantMap(*static_cast<VariantMap *>(other._field.object));
 			}
@@ -618,7 +614,7 @@ Variant & Variant::operator=(const Variant & other)
 				v = *static_cast<VariantMap *>(other._field.object);
 			}
 			break;
-		case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY:
+		case Type::VARIANTMAPINTKEY:
 			if (_field.object == nullptr) {
 				_field.object = new (nothrow) VariantMapIntKey(*static_cast<VariantMapIntKey *>(other._field.object));
 			}
@@ -794,35 +790,35 @@ bool Variant::operator==(const Variant & v) const
 	}
 	switch (_type)
 	{
-	case FMDB_CPP::Variant::Type::NONE:
+	case Type::NONE:
 		break;
-	case FMDB_CPP::Variant::Type::BOOLEAN:
-	case FMDB_CPP::Variant::Type::CHAR:
-	case FMDB_CPP::Variant::Type::BYTE:
-	case FMDB_CPP::Variant::Type::INTEGER:
-	case FMDB_CPP::Variant::Type::UINTEGER:
+	case Type::BOOLEAN:
+	case Type::CHAR:
+	case Type::BYTE:
+	case Type::INTEGER:
+	case Type::UINTEGER:
 		return _field.unsignedVal == v._field.unsignedVal;
-	case FMDB_CPP::Variant::Type::FLOAT:
+	case Type::FLOAT:
 		return std::abs(v._field.floatVal - _field.floatVal) <= FLT_EPSILON;
-	case FMDB_CPP::Variant::Type::DOUBLE:
+	case Type::DOUBLE:
 		return std::abs(v._field.doubleVal - _field.doubleVal) <= FLT_EPSILON;
-	case FMDB_CPP::Variant::Type::LONGLONG:
-	case FMDB_CPP::Variant::Type::ULONGLONG:
+	case Type::LONGLONG:
+	case Type::ULONGLONG:
 		return _field.unsignedLongLongVal == v._field.unsignedLongLongVal;
 		break;
-	case FMDB_CPP::Variant::Type::STRING:
+	case Type::STRING:
 		return *static_cast<string *>(_field.object) == *static_cast<string *>(v._field.object);
 		break;
-	case FMDB_CPP::Variant::Type::DATA:
+	case Type::DATA:
 		return *static_cast<VariantData *>(_field.object) == *static_cast<VariantData *>(v._field.object);
 		break;
-	case FMDB_CPP::Variant::Type::DATE:
+	case Type::DATE:
 		return *static_cast<Date *>(_field.object) == *static_cast<Date *>(v._field.object);
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTVECTOR:
+	case Type::VARIANTVECTOR:
 		return *static_cast<VariantVector *>(_field.object) == *static_cast<VariantVector *>(v._field.object);
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAP: {
+	case Type::VARIANTMAP: {
 		const auto &m1 = *static_cast<VariantMap *>(_field.object);
 		const auto &m2 = *static_cast<VariantMap *>(v._field.object);
 		if (m1.size() != m2.size()) {
@@ -837,7 +833,7 @@ bool Variant::operator==(const Variant & v) const
 		return true;
 	}
 		break;
-	case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY: {
+	case Type::VARIANTMAPINTKEY: {
 		const auto &m1 = *static_cast<VariantMapIntKey *>(_field.object);
 		const auto &m2 = *static_cast<VariantMapIntKey *>(v._field.object);
 		if (m1.size() != m2.size()) {

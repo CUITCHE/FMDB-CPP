@@ -25,6 +25,7 @@
 #include <memory>
 #include <string>
 #include <chrono>
+#include <cassert>
 
 using std::string;
 using std::vector;
@@ -37,6 +38,26 @@ using namespace std::chrono;
 using Data = shared_ptr<vector<unsigned char>>;
 using String = shared_ptr<string>;
 using TimeInterval = std::chrono::duration<double>;
+
+#ifdef DEBUG
+
+#define ____fn____ __PRETTY_FUNCTION__
+
+#define _assert(cond, desc, ...) \
+    do {\
+        if (!(cond)) {\
+            fprintf(stderr, "*** Assertion failure in [%s], %s:%d => ('%s')", ____fn____, __FILE__, __LINE__, #cond);\
+            if (*desc) {\
+                putchar(','), putchar(' ');\
+                fprintf(stderr, desc, ##__VA_ARGS__);\
+            }\
+            putchar('\n');\
+            abort();\
+        }\
+    } while (0)
+#else
+#define _assert(cond, desc, ...) do {} while(0)
+#endif
 
 FMDB_END
 

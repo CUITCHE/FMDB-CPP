@@ -11,7 +11,6 @@
 #include "FMResultSet.h"
 #include "Date.hpp"
 /*#include "Variant.hpp"*/
-#include <cassert>
 #include <sqlite3.h>
 
 using namespace std;
@@ -31,7 +30,7 @@ FMDatabase::FMDatabase(const string &path)
 ,_openFunctions(new (nothrow) decltype(_openFunctions)::element_type)
 ,_databasePath(path)
 {
-    assert(sqlite3_threadsafe());
+    _assert(sqlite3_threadsafe(), "On no thread safe. sqlite3 might not work well.");
 }
 
 FMDatabase::~FMDatabase()
@@ -450,11 +449,11 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
 		sqlite3_bind_double(inStmt, toColumn, date.timeIntervalSince1970().count());
 #else
         string dateString = Date::stringFromDate(date);
-        sqlite3_bind_text(inStmt, toColumn, dateString.c_str(), dateString.size(), SQLITE_STATIC);
+        sqlite3_bind_text(inStmt, toColumn, dateString.c_str(), (int)dateString.size(), SQLITE_STATIC);
 #endif
 	} else if (obj.isTypeOf(Variant::Type::STRING)){
 		auto &str = const_cast<Variant &>(obj).toString();
-		sqlite3_bind_text(inStmt, toColumn, str.c_str(), str.size(), SQLITE_STATIC);
+		sqlite3_bind_text(inStmt, toColumn, str.c_str(), (int)str.size(), SQLITE_STATIC);
 	} else {
 #define _STR(x) #x
 		switch (obj.getType())
@@ -480,11 +479,10 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
 		case FMDB_CPP::Variant::Type::VARIANTVECTOR:
 		case FMDB_CPP::Variant::Type::VARIANTMAP:
 		case FMDB_CPP::Variant::Type::VARIANTMAPINTKEY: 
-			fprintf(stderr, "Don't support (%s, %s, %s) to write to sqlite.\n", _STR(VariantVector), _STR(VariantMap), _STR(VariantMapIntKey));
-			assert(0);
+			_assert(0, "Don't support (%s, %s, %s) to write to sqlite.\n", _STR(VariantVector), _STR(VariantMap), _STR(VariantMapIntKey));
 			break;
-// 		default:
-// 			break;
+ 		default:
+ 			break;
 		}
 #undef _STR
 	}

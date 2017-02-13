@@ -16,5 +16,6 @@ using namespace __FMDB_NSPEC();
 int main(int argc, const char * argv[]) {
     __FMDB_NSPEC()::Date date(TimeInterval(20));
     cout << date << endl;
+    _assert(0 == 1, "");
     return 0;
 }
