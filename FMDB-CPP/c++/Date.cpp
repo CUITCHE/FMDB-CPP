@@ -91,7 +91,7 @@ Date Date::dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate)
     return sinceDate;
 }
 
-#ifdef _MSC_VER
+#ifdef WIN32
 
 void strptime(const char *buf, const char *format, struct tm *tm)
 {
@@ -116,7 +116,7 @@ string Date::stringFromDate(const Date &date)
     time_t time = system_clock::to_time_t(date.d);
     char str[64];
     struct tm tm;
-#ifdef _MSC_VER
+#ifdef WIN32
     localtime_s(&tm, &time);
 #else
     localtime_r(&time, &tm);

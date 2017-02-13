@@ -128,7 +128,7 @@ int FMResultSet::intForColumnIndex(int colunmIndex) const
 long FMResultSet::longForColumnIndex(int columnIndex) const
 {
     return
-#if __LP64__
+#if __PL64__
     sqlite3_column_int64(_statement->getStatement(), columnIndex);
 #else
     sqlite3_column_int(_statement->getStatement(), columnIndex);

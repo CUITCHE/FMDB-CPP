@@ -126,7 +126,7 @@ private:
 	volatile uint32_t _shouldCacheStatements : 1;
     volatile uint32_t _isExecutingStatement : 1;
 	volatile uint32_t _inTransaction : 1;
-#if __LP64__
+#if __PL64__
     uint32_t reserve;
 #endif
     sqlite3 *_db = nullptr;

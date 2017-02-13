@@ -151,7 +151,7 @@ int FMDBDatabaseBusyHandler(void *f, int count)
     TimeInterval delta = Date().timeIntervalSinceReferenceDate() - (self->_startBusyRetryTime);
 
     if (delta < self->_maxBusyRetryTimeInterval) {
-#ifdef _MSC_VER
+#ifdef WIN32
 		int requestedSleepInMillseconds = 50;
 #else
 		int requestedSleepInMillseconds = (int)arc4random_uniform(50) + 50;

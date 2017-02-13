@@ -59,6 +59,20 @@ using TimeInterval = std::chrono::duration<double>;
 #define _assert(cond, desc, ...) do {} while(0)
 #endif
 
+#ifndef __PL64__
+# ifdef WIN32
+#  ifdef _WIN64
+#   define __PL64__ 1
+#  else
+#   define __PL64__ 0
+#  endif
+# endif
+
+# ifdef __clang__
+#  define __PL64__ __LP64__
+# endif
+#endif // __PL64__
+
 FMDB_END
 
 #endif /* FMDBDefs_h */
