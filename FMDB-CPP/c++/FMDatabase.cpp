@@ -25,8 +25,8 @@ FMDatabase::FMDatabase(const string &path)
 ,_shouldCacheStatements(0)
 ,_isExecutingStatement(0)
 ,_inTransaction(0)
-,_cachedStatements(new (nothrow) decltype(_cachedStatements)::element_type())
-,_openResultSets(new (nothrow) decltype(_openResultSets)::element_type)
+,_cachedStatements(new decltype(_cachedStatements)::element_type())
+,_openResultSets(new decltype(_openResultSets)::element_type)
 ,_databasePath(path)
 {
     _assert(sqlite3_threadsafe(), "On no thread safe. sqlite3 might not work well.");
@@ -354,6 +354,12 @@ string FMDatabase::lastErrorMessage() const
     return string(sqlite3_errmsg(_db));
 }
 
+Error FMDatabase::lastError() const
+{
+    VariantMap userInfo({{LocalizedDescriptionKey, lastErrorMessage()}});
+    return Error("FMDatabase", sqlite3_errcode(_db), userInfo);
+}
+
 bool FMDatabase::hadError() const
 {
     int lastErrCode = lastErrorCode();
@@ -678,7 +684,7 @@ static string FMDBEscapeSavePointName(string savepointName)
     return savepointName;
 }
 
-bool FMDatabase::startSavePointWithName(const string &name)
+bool FMDatabase::startSavePointWithName(const string &name, Error *error /*= nullptr*/)
 {
 #if SQLITE_VERSION_NUMBER >= 3007000
     parameterAssert(name.length());
@@ -693,7 +699,7 @@ bool FMDatabase::startSavePointWithName(const string &name)
 #endif
 }
 
-bool FMDatabase::releaseSavePointWithName(const string &name)
+bool FMDatabase::releaseSavePointWithName(const string &name, Error *error /*= nullptr*/)
 {
 #if SQLITE_VERSION_NUMBER >= 3007000
     parameterAssert(name.length());
@@ -708,7 +714,7 @@ bool FMDatabase::releaseSavePointWithName(const string &name)
 #endif
 }
 
-bool FMDatabase::rollbackToSavePointWithName(const string &name)
+bool FMDatabase::rollbackToSavePointWithName(const string &name, Error *error /*= nullptr*/)
 {
 #if SQLITE_VERSION_NUMBER >= 3007000
     parameterAssert(name.length());

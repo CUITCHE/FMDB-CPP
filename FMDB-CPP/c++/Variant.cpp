@@ -82,14 +82,14 @@ Variant::Variant(unsigned long long v)
 Variant::Variant(const VariantData &v)
 :_type(Type::DATA)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) VariantData(v);
     _field.object = d;
 }
 
 Variant::Variant(VariantData &&v)
 :_type(Type::DATA)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(move(v));
+    auto d = new (nothrow) VariantData(move(v));
     _field.object = d;
 }
 
@@ -97,7 +97,7 @@ Variant::Variant(VariantData &&v)
 Variant::Variant(const Date &v)
 :_type(Type::DATE)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) Date(v);
     _field.object = d;
 }
 
@@ -116,14 +116,14 @@ Variant::Variant(const char *v)
 Variant::Variant(const string &v)
 :_type(Type::STRING)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) string(v);
     _field.object = d;
 }
 
 Variant::Variant(string &&v)
 :_type(Type::STRING)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(move(v));
+    auto d = new (nothrow) string(move(v));
     _field.object = d;
 }
 
@@ -131,14 +131,14 @@ Variant::Variant(string &&v)
 Variant::Variant(const VariantVector &v)
 :_type(Type::VARIANTVECTOR)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) VariantVector(v);
     _field.object = d;
 }
 
 Variant::Variant(VariantVector &&v)
 :_type(Type::VARIANTVECTOR)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(move(v));
+    auto d = new (nothrow) VariantVector(move(v));
     _field.object = d;
 }
 
@@ -146,14 +146,14 @@ Variant::Variant(VariantVector &&v)
 Variant::Variant(const VariantMap &v)
 :_type(Type::VARIANTMAP)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) VariantMap(v);
     _field.object = d;
 }
 
 Variant::Variant(VariantMap &&v)
 :_type(Type::VARIANTMAP)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(move(v));
+    auto d = new (nothrow) VariantMap(move(v));
     _field.object = d;
 }
 
@@ -161,38 +161,176 @@ Variant::Variant(VariantMap &&v)
 Variant::Variant(const VariantMapIntKey &v)
 :_type(Type::VARIANTMAPINTKEY)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(v);
+    auto d = new (nothrow) VariantMapIntKey(v);
     _field.object = d;
 }
 
 Variant::Variant(VariantMapIntKey &&v)
 :_type(Type::VARIANTMAPINTKEY)
 {
-    auto d = new (nothrow) remove_cv<remove_reference<decltype(v)>::type>::type(move(v));
+    auto d = new (nothrow) VariantMapIntKey(move(v));
     _field.object = d;
 }
 
 Variant::Variant(const Variant &other)
+:_type(Type::NONE)
 {
 	*this = other;
 }
 
 Variant::Variant(Variant && other)
+:_type(Type::NONE)
 {
 	*this = std::move(other);
 }
 
 Variant::~Variant()
 {
+    fprintf(stderr, "Destructor：%p(%s)\n", this, description().c_str());
+    fflush(stderr);
     clear();
+}
+
+static std::string getTabs(int depth)
+{
+    std::string tabWidth;
+
+    for (int i = 0; i < depth; ++i)
+    {
+        tabWidth += "\t";
+    }
+
+    return tabWidth;
+}
+
+static string visit(const Variant &v, int depth);
+
+static string visitVector(const VariantVector &v, int depth)
+{
+    stringstream ss;
+    if (depth > 0) {
+        ss << "\n";
+    }
+
+    ss << getTabs(depth) << "[";
+
+    int i = 0;
+    for (const auto &child : v) {
+        ss << getTabs(depth + 1) << visit(child, depth + 1);
+        if (++i < v.size()) {
+            ss << ",\n";
+        }
+    }
+    ss << getTabs(depth) << "]\n";
+    return ss.str();
+}
+
+template <typename T>
+static string visitMap(const T &v, int depth)
+{
+    stringstream ss;
+    if (depth > 0) {
+        ss << "\n";
+    }
+
+    ss << getTabs(depth) << "{";
+    if (std::is_base_of<string, typename T::key_type>::value) {
+        for (auto &iter : v) {
+            ss << getTabs(depth + 1) << "\"" << iter.first << "\" = ";
+            ss << visit(iter.second, depth + 1);
+        }
+    } else {
+        for (auto &iter : v) {
+            ss << getTabs(depth + 1) << iter.first << " = ";
+            ss << visit(iter.second, depth + 1);
+        }
+    }
+
+    ss << getTabs(depth + 1) << "}\n";
+
+    return ss.str();
+}
+
+static string visit(const Variant &v, int depth)
+{
+    stringstream ss;
+    switch (v.getType()) {
+        case Variant::Type::NONE:
+        case Variant::Type::BOOLEAN:
+        case Variant::Type::CHAR:
+        case Variant::Type::BYTE:
+        case Variant::Type::INTEGER:
+        case Variant::Type::UINTEGER:
+        case Variant::Type::FLOAT:
+        case Variant::Type::DOUBLE:
+        case Variant::Type::LONGLONG:
+        case Variant::Type::ULONGLONG:
+            ss << const_cast<Variant &>(v).toString() << "\n";
+            break;
+        case Variant::Type::STRING:
+            ss << "\"" <<const_cast<Variant &>(v).toString() << "\"" << "\n";
+            break;
+        case Variant::Type::DATA: {
+            auto &data = v.toVariantData();
+            const unsigned char *d = data.data();
+            size_t length = data.size();
+            const long long *pll = (const long long *)d;
+            ss.setf(ios::showbase);
+            ss.setf(ios_base::hex, ios_base::basefield);
+            while (length >= 8) {
+                ss << "0x" << *pll++ << " ";
+                length -= 8;
+            }
+            if (length > 0) {
+                long long rest = 0;
+                memcpy(&rest, pll, length);
+                ss << "0x" << rest;
+
+            } else if (length == 0){
+                string str = ss.str();
+                str.erase(str.length() - 1, 1);
+                return str;
+            } else {
+                _assert(false, "length(%zu) must be >= 0.", length);
+            }
+        }
+            break;
+        case Variant::Type::DATE:
+            ss << v.toDate();
+            break;
+        case Variant::Type::VARIANTVECTOR:
+            ss << visitVector(v.toVariantVector(), depth);
+            break;
+        case Variant::Type::VARIANTMAP:
+            ss << visitMap(v.toVariantMap(), depth);
+            break;
+        case Variant::Type::VARIANTMAPINTKEY:
+            ss << visitMap(v.toVariantMapIntKey(), depth);
+            break;
+//        default:
+//            break;
+    }
+    return ss.str();
+}
+
+string Variant::description() const
+{
+    string str = visit(*this, 0);
+    return str;
 }
 
 bool Variant::convert(Type toType) const
 {
     if (_type == Type::NONE) {
+        if (toType == Type::STRING) {
+            return true;
+        }
         return false;
     }
     if (_type == toType) {
+        return true;
+    }
+    if (_type == Type::DATE && toType == Type::STRING) {
         return true;
     }
     if (toType >= Type::DATA || _type >= Type::DATA) { // Data以上的数据结构不能够被转换
@@ -458,12 +596,15 @@ string Variant::toString()
 {
 	_assert(convert(Type::STRING), "Can't convert to string");
 	if (_type == Type::STRING) {
+        if (!_field.object) {
+            return string("(null)");
+        }
 		return *static_cast<string *>(_field.object);
 	}
 	stringstream ss;
 	switch (_type)
 	{
-	case Type::NONE:
+	case Type::NONE: ss << "(null)";
 		break;
 	case Type::BOOLEAN: ss << (_field.boolVal ? "true" : "false");
 		break;
@@ -487,7 +628,7 @@ string Variant::toString()
 		break;
 	case Type::DATA:
 		break;
-	case Type::DATE:
+    case Type::DATE: ss << *static_cast<Date *>(_field.object);
 		break;
 	case Type::VARIANTVECTOR:
 		break;
@@ -885,6 +1026,8 @@ void Variant::clear()
 
 void Variant::reset(Type type)
 {
+    _assert(_type <= Type::ULONGLONG, "Memory Error!");
+    parameterAssert(type <= Type::VARIANTMAPINTKEY);
     if (_type == type) {
         return;
     }

@@ -49,12 +49,12 @@
 
     FMResultSet *resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=1");
     XCTAssert(resultSet);
-//    NSError *error = nil;
-    XCTAssertTrue(resultSet->nextWithError(nullptr));
-//    XCTAssertNil(error);
+    Error err;
+    XCTAssertTrue(resultSet->nextWithError(&err));
+    XCTAssertTrue(err.isEmpty());
 
-    XCTAssertFalse(resultSet->nextWithError(0));
-//    XCTAssertNil(error);
+    XCTAssertFalse(resultSet->nextWithError(&err));
+    XCTAssertTrue(err.isEmpty());
 
     resultSet->close();
 }
@@ -72,12 +72,12 @@
     newDB.open();
 
     newDB.beginTransaction();
-//    NSError *error;
-    XCTAssertFalse(resultSet->nextWithError(0));
+    Error err;
+    XCTAssertFalse(resultSet->nextWithError(&err));
     newDB.commit();
 
 
-//    XCTAssertEqual(error.code, SQLITE_BUSY, @"SQLITE_BUSY should be the last error");
+    XCTAssertEqual(err.code(), SQLITE_BUSY, @"SQLITE_BUSY should be the last error");
     resultSet->close();
 }
 
@@ -90,10 +90,10 @@
     FMResultSet *resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=9");
     XCTAssert(resultSet);
     XCTAssertFalse(resultSet->next());
-//    NSError *error;
-    XCTAssertFalse(resultSet->nextWithError(0));
+    Error error;
+    XCTAssertFalse(resultSet->nextWithError(&error));
 
-//    XCTAssertEqual(error.code, SQLITE_MISUSE, @"SQLITE_MISUSE should be the last error");
+    XCTAssertEqual(error.code(), SQLITE_MISUSE, @"SQLITE_MISUSE should be the last error");
 }
 
 @end

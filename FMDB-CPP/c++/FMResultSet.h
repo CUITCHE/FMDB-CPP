@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include "FMDBDefs.h"
 #include "Date.hpp"
+#include "Error.hpp"
 
 using std::unordered_map;
 
@@ -37,7 +38,7 @@ public:
     void close();
 
     bool next();
-    bool nextWithError(void **error);
+    bool nextWithError(Error *error = nullptr);
     bool hasAnotherRow() const;
 
     int columnCount() const;

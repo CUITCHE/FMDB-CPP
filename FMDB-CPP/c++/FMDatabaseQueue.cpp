@@ -49,7 +49,7 @@ FMDatabaseQueue::FMDatabaseQueue(const string &path, int openFlags/* = 2 | 4*/, 
     }
     _packet->_mutex = new mutex;
     _packet->_tasks = new list<function<void(void)>>;
-    _packet->_thread = new (nothrow) thread(std::bind(&FMDatabaseQueue::exec, this));
+    _packet->_thread = new thread(std::bind(&FMDatabaseQueue::exec, this));
 }
 
 FMDatabaseQueue::~FMDatabaseQueue()

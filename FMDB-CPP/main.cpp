@@ -14,6 +14,6 @@ using namespace std;
 using namespace __FMDB_NSPEC();
 
 int main(int argc, const char * argv[]) {
-    cout << __PL64__ << endl;
+    cout << sizeof(unique_ptr<std::unordered_map<string, Variant>>) << endl;
     return 0;
 }

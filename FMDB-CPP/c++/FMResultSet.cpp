@@ -48,43 +48,43 @@ bool FMResultSet::next()
 	return nextWithError(nullptr);
 }
 
-bool FMResultSet::nextWithError(void **error)
+bool FMResultSet::nextWithError(Error *outErr/* = nullptr*/)
 {
     int rc = sqlite3_step(_statement ? _statement->getStatement() : nullptr);
 
 	if (SQLITE_BUSY == rc || SQLITE_LOCKED == rc) {
         fprintf(stderr, "%s:%d Database busy(%s)", __FUNCTION__, __LINE__, _parentDB ? _parentDB->databasePath().c_str() : 0);
 		fprintf(stderr, "Database busy");
-// 		if (outErr) {
-// 			*outErr = [_parentDB lastError];
-// 		}
+ 		if (outErr) {
+ 			*outErr = _parentDB->lastError();
+ 		}
 	}
 	else if (SQLITE_DONE == rc || SQLITE_ROW == rc) {
 		// all is well, let's return.
 	} else if (SQLITE_ERROR == rc) {
         fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
-// 		if (outErr) {
-// 			*outErr = [_parentDB lastError];
-// 		}
+        if (outErr) {
+            *outErr = _parentDB->lastError();
+        }
 	} else if (SQLITE_MISUSE == rc) {
 		// uh oh.
         fprintf(stderr, "Error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
-// 		if (outErr) {
-// 			if (_parentDB) {
-// 				*outErr = [_parentDB lastError];
-// 			} else {
-// 				// If 'next' or 'nextWithError' is called after the result set is closed,
-// 				// we need to return the appropriate error.
-// 				NSDictionary* errorMessage = [NSDictionary dictionaryWithObject : @"parentDB does not exist" forKey:NSLocalizedDescriptionKey];
-// 					*outErr = [NSError errorWithDomain : @"FMDatabase" code : SQLITE_MISUSE userInfo : errorMessage];
-// 			}
-// 		}
+ 		if (outErr) {
+ 			if (_parentDB) {
+ 				*outErr = _parentDB->lastError();
+ 			} else {
+ 				// If 'next' or 'nextWithError' is called after the result set is closed,
+ 				// we need to return the appropriate error.
+                VariantMap userInfo({{LocalizedDescriptionKey, "parentDB does not exist"}});
+                *outErr = Error("FMDatabase", SQLITE_MISUSE, userInfo);
+ 			}
+ 		}
 	} else {
 		// wtf?
         fprintf(stderr, "Unknown error calling sqlite3_step(%d: %s) rs", rc, sqlite3_errmsg(_parentDB ? _parentDB->sqliteHandle() : 0));
-// 		if (outErr) {
-// 			*outErr = [_parentDB lastError];
-// 		}
+ 		if (outErr) {
+ 			*outErr = _parentDB->lastError();
+ 		}
 	}
 	if (rc != SQLITE_ROW) {
 		close();

@@ -62,7 +62,7 @@ public:
 
     ~Variant();
 
-    enum class Type {
+    enum class Type : unsigned long long {
         NONE = 0,
         BOOLEAN,
         CHAR,

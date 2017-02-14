@@ -14,6 +14,7 @@
 #include <functional>
 #include "FMDBDefs.h"
 #include "Variant.hpp"
+#include "Error.hpp"
 
 using std::unordered_map;
 using std::unordered_set;
@@ -67,9 +68,9 @@ public:
     bool rollback();
     bool inTransaction();
 
-    bool startSavePointWithName(const string &name);
-    bool releaseSavePointWithName(const string &name);
-    bool rollbackToSavePointWithName(const string &name);
+    bool startSavePointWithName(const string &name, Error *error = nullptr);
+    bool releaseSavePointWithName(const string &name, Error *error = nullptr);
+    bool rollbackToSavePointWithName(const string &name, Error *error = nullptr);
     bool inSavePoint(const function<void(bool *rollback)> &block);
 
     /* Cached statements and result sets */
@@ -94,6 +95,7 @@ public:
 
     /* Retrieving error codes */
     string lastErrorMessage() const;
+    Error lastError() const;
     int lastErrorCode() const;
     int lastExtendedErrorCode() const;
     bool hadError() const;
