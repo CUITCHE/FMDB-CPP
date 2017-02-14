@@ -4,3 +4,5 @@ msvs/FMDB-CPP-MSVS/Debug/*
 *.opensdf
 *.sdf
 msvs/FMDB-CPP-MSVS/FMDB-CPP-MSVS/ReadMe.txt
+msvs/FMDB-CPP-MSVS/UnitTest1/Debug/*
+msvs/FMDB-CPP-MSVS/ipch/*

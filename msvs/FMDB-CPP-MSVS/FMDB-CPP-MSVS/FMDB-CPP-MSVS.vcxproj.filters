@@ -30,9 +30,6 @@
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMDatabase.cpp">
       <Filter>c++</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\FMDB-CPP\c++\FMDatabasePool.cpp">
-      <Filter>c++</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\FMDB-CPP\c++\FMResultSet.cpp">
       <Filter>c++</Filter>
     </ClCompile>
@@ -42,15 +39,15 @@
     <ClCompile Include="..\..\..\FMDB-CPP\c++\Variant.cpp">
       <Filter>c++</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\FMDB-CPP\c++\FMDatabaseQueue.cpp">
+      <Filter>c++</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\FMDB-CPP\c++\Date.hpp">
       <Filter>c++</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDatabase.h">
-      <Filter>c++</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDatabasePool.h">
       <Filter>c++</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDB.h">
@@ -66,6 +63,9 @@
       <Filter>c++</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\FMDB-CPP\c++\Variant.hpp">
+      <Filter>c++</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\FMDB-CPP\c++\FMDatabaseQueue.h">
       <Filter>c++</Filter>
     </ClInclude>
   </ItemGroup>
