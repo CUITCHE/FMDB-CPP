@@ -60,6 +60,8 @@ public:
 	Variant(const Variant &other);
 	Variant(Variant &&other);
 
+    Variant(std::nullptr_t);
+
     ~Variant();
 
     enum class Type : unsigned long long {
@@ -150,12 +152,17 @@ public:
 	Variant& operator= (double v);
 	/** Assignment operator, assign from bool to Variant. */
 	Variant& operator= (bool v);
+    /** Assignment operator, assign from long long to Variant. */
+    Variant& operator= (long long v);
+    /** Assignment operator, assign from unsigned long long to Variant. */
+    Variant& operator= (unsigned long long v);
 	/** Assignment operator, assign from char* to Variant. */
 	Variant& operator= (const char* v);
 	/** Assignment operator, assign from string to Variant. */
 	Variant& operator= (const std::string& v);
 	/** Assignment operator, assign from Date to Variant. */
 	Variant& operator= (const Date& v);
+//    Variant& operator= (std::shared_ptr<Date> &&rhs);
 
 	/** Assignment operator, assign from VariantVector to Variant. */
 	Variant& operator= (const VariantVector& v);
@@ -200,6 +207,7 @@ private:
         long long longLongVal;
         unsigned long long unsignedLongLongVal;
         void *object; // Data, Date, String, etc.
+//        std::unique_ptr<void> *object;
     }_field{ 0 };
     Type _type;
 };

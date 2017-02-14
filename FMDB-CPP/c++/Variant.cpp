@@ -184,6 +184,11 @@ Variant::Variant(Variant && other)
 	*this = std::move(other);
 }
 
+Variant::Variant(std::nullptr_t)
+:_type(Type::NONE)
+{
+}
+
 Variant::~Variant()
 {
     fprintf(stderr, "Destructor：%p(%s)\n", this, description().c_str());
@@ -824,9 +829,23 @@ Variant & Variant::operator=(double v)
 
 Variant & Variant::operator=(bool v)
 {
-	reset(Type::BOOLEAN);
-	_field.boolVal = v;
-	return *this;
+    reset(Type::BOOLEAN);
+    _field.boolVal = v;
+    return *this;
+}
+
+Variant & Variant::operator=(long long v)
+{
+    reset(Type::LONGLONG);
+    _field.longLongVal = v;
+    return *this;
+}
+
+Variant & Variant::operator=(unsigned long long v)
+{
+    reset(Type::ULONGLONG);
+    _field.longLongVal = v;
+    return *this;
 }
 
 Variant & Variant::operator=(const char * v)
@@ -845,10 +864,19 @@ Variant & Variant::operator=(const std::string & v)
 
 Variant & Variant::operator=(const Date & v)
 {
-	reset(Type::DATE);
-	*static_cast<Date *>(_field.object) = v;
-	return *this;
+    reset(Type::DATE);
+    *static_cast<Date *>(_field.object) = v;
+    return *this;
 }
+
+//Variant & Variant::operator=(shared_ptr<Date> &&v)
+//{
+//    clear();
+//    _type = Type::DATE;
+//    v.reset();
+//    _field.object = 0;
+//    return *this;
+//}
 
 Variant & Variant::operator=(const VariantVector & v)
 {

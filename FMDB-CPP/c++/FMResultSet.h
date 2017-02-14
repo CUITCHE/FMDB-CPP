@@ -13,6 +13,7 @@
 #include "FMDBDefs.h"
 #include "Date.hpp"
 #include "Error.hpp"
+#include "Variant.hpp"
 
 using std::unordered_map;
 
@@ -55,6 +56,9 @@ public:
     long long longLongForColumn(const string &columnName) const { return longLongForColumnIndex(columnIndexForName(columnName)); }
     long long longLongForColumnIndex(int columnIndex) const;
 
+    unsigned long long unsignedLongLongForColumnIndex(int columnIndex) const { return longLongForColumnIndex(columnIndex); }
+    unsigned long long unsignedLongLongForColumn(const string &columnName) const { return longLongForColumnIndex(columnIndexForName(columnName)); }
+
     bool boolForColumn(const string &columnName) const { return boolForColumnIndex(columnIndexForName(columnName)); }
     bool boolForColumnIndex(int columnIndex) const;
 
@@ -72,6 +76,13 @@ public:
 
     const unsigned char * UTF8StringForColumn(const string &columnName) const { return UTF8StringForColumnIndex(columnIndexForName(columnName)); }
     const unsigned char * UTF8StringForColumnIndex(int columnIndex) const;
+
+    Variant operator[](int columnIndex) const;
+    Variant operator[](const string &columnName) const { return this->operator[](columnIndexForName(columnName)); }
+
+    Variant objectForColumnIndex(int columnIndex) const;
+    Variant objectForColumn(const string &columnName) const { return objectForColumnIndex(columnIndexForName(columnName)); }
+
 #if defined(NS_CC)
     // 以后需要改成自己写的Value class
     CCValue valueForColumn(const string &columnName) const;
@@ -86,6 +97,8 @@ public:
 	void setQuery(const string &query) { _query = query; }
 
 	const unordered_map<string, int>& columnNameToIndexMap() const;
+
+    VariantMap resultDictionary() const;
 private:
     FMDatabase *_parentDB;
     FMStatement *_statement;

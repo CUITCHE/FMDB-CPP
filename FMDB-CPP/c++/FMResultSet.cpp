@@ -191,6 +191,43 @@ shared_ptr<Date> FMResultSet::dateForColumnIndex(int columnIndex) const
     return make_shared<Date>(date);
 }
 
+const unsigned char *FMResultSet::UTF8StringForColumnIndex(int columnIndex) const
+{
+    if (sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL || (columnIndex < 0)) {
+        return nullptr;
+    }
+
+    return sqlite3_column_text(_statement->getStatement(), columnIndex);
+}
+
+Variant FMResultSet::operator[](int columnIndex) const
+{
+    int columnType = sqlite3_column_type(_statement->getStatement(), columnIndex);
+
+    Variant returnValue;
+
+    if (columnType == SQLITE_INTEGER) {
+        returnValue = longLongForColumnIndex(columnIndex);
+    }
+    else if (columnType == SQLITE_FLOAT) {
+        returnValue = doubleForColumnIndex(columnIndex);
+    }
+    else if (columnType == SQLITE_BLOB) {
+        returnValue = *dataForColumnIndex(columnIndex);
+    }
+    else {
+        //default to a string for everything else
+        returnValue = *stringForColumnIndex(columnIndex);
+    }
+
+    return returnValue;
+}
+
+Variant FMResultSet::objectForColumnIndex(int columnIndex) const
+{
+    return (*this)[columnIndex];
+}
+
 bool FMResultSet::columnIndexIsNull(int columnIndex) const
 {
     return sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL;
@@ -209,6 +246,26 @@ const unordered_map<string, int>& FMResultSet::columnNameToIndexMap() const
 		}
 	}
 	return _columnNameToIndexMap;
+}
+
+VariantMap FMResultSet::resultDictionary() const
+{
+    size_t num_cols = sqlite3_data_count(_statement->getStatement());
+
+    VariantMap map;
+    if (num_cols > 0) {
+        int columnCount = sqlite3_column_count(_statement->getStatement());
+
+        int columnIdx = 0;
+        for (columnIdx = 0; columnIdx < columnCount; columnIdx++) {
+            string columnName(sqlite3_column_name(_statement->getStatement(), columnIdx));
+            Variant objectValue = objectForColumnIndex(columnIdx);
+            map.emplace(columnName, objectValue);
+        }
+    } else {
+        fprintf(stderr, "Warning: There seem to be no columns in this set.");
+    }
+    return map;
 }
 
 FMDB_END

@@ -8,9 +8,7 @@
 
 #include "FMDatabase.h"
 #include "FMStatement.hpp"
-#include "FMResultSet.h"
 #include "Date.hpp"
-/*#include "Variant.hpp"*/
 #include <sqlite3.h>
 
 using namespace std;

@@ -15,6 +15,7 @@
 #include "FMDBDefs.h"
 #include "Variant.hpp"
 #include "Error.hpp"
+#include "FMResultSet.h"
 
 using std::unordered_map;
 using std::unordered_set;
@@ -143,6 +144,50 @@ public:
 
     /** callback function */
     void makeFunctionNamed(const string &name, int maximumArgument, const function<void(void *context, int argc, void **argv)> &block);
+
+    /** convenience methods */
+    template<typename... Args>
+    int intForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    long longForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    long long longLongForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    bool boolForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    double doubleForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    String stringForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    Data dataForQuery(const string &sql, Args... args);
+
+    template<typename... Args>
+    shared_ptr<Date> dateForQuery(const string &sql, Args... args);
+
+    bool tableExists(const string &tableName);
+
+    FMResultSet *getSchema();
+    FMResultSet *getTableSchema();
+
+    bool columnExistsInTable(const string &tableName, const string &columnName);
+
+    bool validateSQL(const string &sql, Error *error);
+
+    uint32_t applicationID() const;
+    void setApplicationID(uint32_t appID);
+
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+    string applicationIDString() const;
+    void setApplicationIDString(const string &aString);
+#endif
+    uint32_t userVersion() const;
+    void setUserVersion(uint32_t version);
 private:
 	bool executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, FMStatement *&statement);
 	bool executeQueryParametersCheck(int inputParametersCount, sqlite3_stmt *pStmt);
@@ -223,6 +268,103 @@ inline void FMDatabase::bindObjects(sqlite3_stmt * inStmt, const T & v, Args... 
 template<int paramN>
 inline void FMDatabase::bindObjects(sqlite3_stmt * inStmt)
 {}
+
+/** convenience methods*/
+template<typename... Args>
+inline int FMDatabase::intForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->intForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline long FMDatabase::longForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->longForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline long long FMDatabase::longLongForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->longLongForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline bool FMDatabase::boolForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->boolForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline double FMDatabase::doubleForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->doubleForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline String FMDatabase::stringForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->stringForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline Data FMDatabase::dataForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->dataForColumnIndex(0);
+    rs->close();
+    return n;
+}
+
+template<typename... Args>
+inline shared_ptr<Date> FMDatabase::dateForQuery(const string &sql, Args... args)
+{
+    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    if (rs->next()) {
+        return 0;
+    }
+    auto n = rs->dateForColumnIndex(0);
+    rs->close();
+    return n;
+}
 
 FMDB_END
 

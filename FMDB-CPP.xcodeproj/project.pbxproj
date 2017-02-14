@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */; };
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
 		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
 		FB88CB181E4C4600005EEECD /* FMDatabaseQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */; };
@@ -41,6 +42,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseTests.mm; sourceTree = "<group>"; };
 		FB88CB031E4C45E8005EEECD /* FMDB-CPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FMDB-CPP"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB88CB061E4C45E8005EEECD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabase.cpp; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				FBA2F8281E51BB4E00589450 /* Info.plist */,
 				FBA2F82E1E51BBB100589450 /* FMDBTempDBTests.h */,
 				FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */,
+				FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */,
 				FBA2F8361E51C05400589450 /* FMResultSetTests.mm */,
 			);
 			path = Tests;
@@ -264,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBA2F82D1E51BB9700589450 /* FMDBTempDBTests.mm in Sources */,
+				FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */,
 				FBA2F8341E51BBD500589450 /* Variant.cpp in Sources */,
 				FBA2F8301E51BBD500589450 /* FMDatabaseQueue.cpp in Sources */,
 				FB8C571C1E52AC210080D089 /* Error.cpp in Sources */,
