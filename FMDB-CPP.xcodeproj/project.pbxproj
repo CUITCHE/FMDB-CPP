@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */; };
 		FB82D6941E5555EC007D6E15 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
+		FB82D6961E55A3CB007D6E15 /* FMDatabaseQueueTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */; };
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
 		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
 		FB88CB181E4C4600005EEECD /* FMDatabaseQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */; };
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseTests.mm; sourceTree = "<group>"; };
+		FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseQueueTests.mm; sourceTree = "<group>"; };
 		FB88CB031E4C45E8005EEECD /* FMDB-CPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FMDB-CPP"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB88CB061E4C45E8005EEECD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMDatabase.cpp; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				FBA2F8281E51BB4E00589450 /* Info.plist */,
 				FBA2F82E1E51BBB100589450 /* FMDBTempDBTests.h */,
 				FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */,
+				FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */,
 				FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */,
 				FBA2F8361E51C05400589450 /* FMResultSetTests.mm */,
 			);
@@ -287,6 +290,7 @@
 				FBA2F8341E51BBD500589450 /* Variant.cpp in Sources */,
 				FBA2F8301E51BBD500589450 /* FMDatabaseQueue.cpp in Sources */,
 				FB8C571C1E52AC210080D089 /* Error.cpp in Sources */,
+				FB82D6961E55A3CB007D6E15 /* FMDatabaseQueueTests.mm in Sources */,
 				FBA2F8321E51BBD500589450 /* FMStatement.cpp in Sources */,
 				FBA2F8331E51BBD500589450 /* Date.cpp in Sources */,
 				FBA2F8311E51BBD500589450 /* FMResultSet.cpp in Sources */,

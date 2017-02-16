@@ -39,7 +39,8 @@ public:
     using StatemenCacheType = unique_ptr<unordered_map<string, vector<shared_ptr<FMStatement>>>>;
     using FMDBExecuteStatementsCallbackBlock = function<int(unordered_map<string, Variant> &result)>;
 
-    FMDatabase(const string &filepath = FMDatabaseNullFilePath);
+    static const string stringNull;
+    FMDatabase(const string &filepath = FMDatabase::stringNull);
     ~FMDatabase();
 
     bool traceExecution() const { return _traceExecution; }
@@ -49,8 +50,7 @@ public:
     const StatemenCacheType &cachedStatements() const { return _cachedStatements; }
 
     bool open();
-    bool openWithFlags(int flags);
-    bool openWithFlags(int flags, const string &vfs);
+    bool openWithFlags(int flags, const string &vfs = FMDatabase::stringNull);
     bool close();
 
     static string sqliteLibVersion();

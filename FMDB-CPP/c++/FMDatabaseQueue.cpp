@@ -7,7 +7,6 @@
 //
 
 #include "FMDatabaseQueue.h"
-#include "FMDatabase.h"
 #include "Variant.hpp"
 #include <sqlite3.h>
 #include <thread>
@@ -31,15 +30,18 @@ struct __threadQueuePacket {
     }
 };
 
-FMDatabaseQueue::FMDatabaseQueue(const string &path, int openFlags/* = 2 | 4*/, const string &vfsName/* = string()*/)
+FMDatabaseQueue::FMDatabaseQueue(const string &path, int openFlags/* = 0*/, const string &vfsName/* = FMDatabase::stringNull*/)
 :_path(path)
 ,_openFlags(openFlags)
-,_vfsName((vfsName))
+,_vfsName(vfsName)
 ,_db(new FMDatabase(path))
 ,_packet(new struct __threadQueuePacket)
 {
 #if SQLITE_VERSION_NUMBER >= 3005000
-    bool success = _db->openWithFlags(openFlags, _vfsName);
+    if (openFlags == 0) {
+        openFlags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+    }
+    bool success = _db->openWithFlags(openFlags, vfsName);
 #else
     bool success = _db->open();
 #endif
@@ -54,7 +56,7 @@ FMDatabaseQueue::FMDatabaseQueue(const string &path, int openFlags/* = 2 | 4*/, 
 
 FMDatabaseQueue::~FMDatabaseQueue()
 {
-    stop();
+    close();
     delete _db;
     _db = nullptr;
 
@@ -62,7 +64,7 @@ FMDatabaseQueue::~FMDatabaseQueue()
     _packet = nullptr;
 }
 
-void FMDatabaseQueue::stop()
+void FMDatabaseQueue::close()
 {
     _packet->_stop = true;
     if (_packet->_thread->joinable()) { // wait for finishing current task.

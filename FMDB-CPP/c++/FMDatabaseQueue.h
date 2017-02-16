@@ -9,14 +9,9 @@
 #ifndef FMDatabaseQueue_hpp
 #define FMDatabaseQueue_hpp
 
-#include "FMDBDefs.h"
-#include <functional>
-
-using std::function;
+#include "FMDatabase.h"
 
 FMDB_BEGIN
-
-class FMDatabase;
 
 /** To perform queries and updates on multiple threads, you'll want to use `FMDatabaseQueue`.
 
@@ -75,9 +70,9 @@ class FMDatabaseQueue {
     friend struct __threadQueuePacket;
     struct __threadQueuePacket *_packet;
 public:
-    FMDatabaseQueue(const string &path, int openFlags = 2 | 4, const string &vfsName = string());
+    FMDatabaseQueue(const string &path, int openFlags = 0, const string &vfsName = FMDatabase::stringNull);
     ~FMDatabaseQueue();
-    void stop();
+    void close();
 
     /** API */
     void inDatabase(const std::function<void(FMDatabase &db)> &block);

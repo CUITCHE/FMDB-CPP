@@ -425,8 +425,6 @@
     self.db->executeUpdate("create table nulltest2 (s text, d data, i integer, f double, b integer)");
 
     auto vd = [self NSDataToVarintData:safariCompass];
-    fprintf(stderr, "--%s--\n", Variant(vd).description().c_str());
-    fflush(stderr);
     NSData *copy = [NSData dataWithBytes:vd.data() length:vd.size()];
     XCTAssertEqualObjects(safariCompass, copy);
     self.db->executeUpdate("insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , "Hi", vd, 12, 4.4f, true);

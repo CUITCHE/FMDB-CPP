@@ -15,9 +15,9 @@ using namespace std;
 
 FMDB_BEGIN
 
-const string FMDatabaseNullFilePath = "";
+const string FMDatabase::stringNull = "";
 
-FMDatabase::FMDatabase(const string &path/* = FMDatabaseNullFilePath*/)
+FMDatabase::FMDatabase(const string &path/* = FMDatabase::stringNull*/)
 :_logsErrors(true)
 ,_crashOnErrors(false)
 ,_traceExecution(0)
@@ -30,7 +30,7 @@ FMDatabase::FMDatabase(const string &path/* = FMDatabaseNullFilePath*/)
 ,_databasePath(nullptr)
 {
     _assert(sqlite3_threadsafe(), "On no thread safe. sqlite3 might not work well.");
-    if (&path != &FMDatabaseNullFilePath) {
+    if (&path != &stringNull) {
         _databasePath.reset(new string(path));
     }
 }
@@ -67,19 +67,19 @@ bool FMDatabase::open()
     return true;
 }
 
-bool FMDatabase::openWithFlags(int flags)
-{
-    return openWithFlags(flags, nullptr);
-}
-
-bool FMDatabase::openWithFlags(int flags, const string &vfs)
+bool FMDatabase::openWithFlags(int flags, const string &vfs /*= FMDatabase::stringNull*/)
 {
 #if SQLITE_VERSION_NUMBER >= 3005000
     if (_db) {
         return true;
     }
 
-    int err = sqlite3_open_v2(sqlitePath(), (sqlite3**)&_db, flags, vfs.c_str());
+    const char *vfsc = nullptr;
+    if (&vfs != &stringNull) {
+        vfsc = vfs.c_str();
+    }
+
+    int err = sqlite3_open_v2(sqlitePath(), (sqlite3**)&_db, flags, vfsc);
     if(err != SQLITE_OK) {
         fprintf(stderr, "error opening!: %d\n", err);
         return false;
