@@ -148,8 +148,8 @@ public:
         return copy;
     }
 
-	bool operator==(const Date &rhs) { return this->d == rhs.d; }
-	bool operator!=(const Date &rhs) { return !(*this == rhs); }
+	bool operator==(const Date &rhs) const { return this->d == rhs.d; }
+	bool operator!=(const Date &rhs) const { return !(*this == rhs); }
 
 	friend std::ostream& operator<<(std::ostream &os, const Date &date)
     {

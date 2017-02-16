@@ -78,6 +78,16 @@ Variant::Variant(unsigned long long v)
     _field.unsignedLongLongVal = v;
 }
 
+Variant::Variant(const char *v)
+:_type(Type::CSTRING)
+{
+    if (v) {
+        _field.object = const_cast<char *>(v);
+    } else {
+        _type = Type::NONE;
+    }
+}
+
 
 Variant::Variant(const VariantData &v)
 :_type(Type::DATA)
@@ -99,18 +109,6 @@ Variant::Variant(const Date &v)
 {
     auto d = new (nothrow) Date(v);
     _field.object = d;
-}
-
-
-Variant::Variant(const char *v)
-:_type(Type::STRING)
-{
-    if (v) {
-        auto d = new (nothrow) string(v);
-        _field.object = d;
-    } else {
-        _type = Type::NONE;
-    }
 }
 
 Variant::Variant(const string &v)
@@ -191,8 +189,8 @@ Variant::Variant(std::nullptr_t)
 
 Variant::~Variant()
 {
-    fprintf(stderr, "Destructor：%p(%s)\n", this, description().c_str());
-    fflush(stderr);
+//    fprintf(stderr, "Destructor：%p(%s)\n", this, description().c_str());
+//    fflush(stderr);
     clear();
 }
 
@@ -272,8 +270,11 @@ static string visit(const Variant &v, int depth)
         case Variant::Type::ULONGLONG:
             ss << const_cast<Variant &>(v).toString() << "\n";
             break;
+        case Variant::Type::CSTRING:
+            ss << "\"" << v.toCString() << "\"" << "\n";
+            break;
         case Variant::Type::STRING:
-            ss << "\"" <<const_cast<Variant &>(v).toString() << "\"" << "\n";
+            ss << "\"" << const_cast<Variant &>(v).toString() << "\"" << "\n";
             break;
         case Variant::Type::DATA: {
             auto &data = v.toVariantData();
@@ -282,14 +283,15 @@ static string visit(const Variant &v, int depth)
             const long long *pll = (const long long *)d;
             ss.setf(ios::showbase);
             ss.setf(ios_base::hex, ios_base::basefield);
+            ss << "<";
             while (length >= 8) {
-                ss << "0x" << *pll++ << " ";
+                ss << *pll++ << " ";
                 length -= 8;
             }
             if (length > 0) {
                 long long rest = 0;
                 memcpy(&rest, pll, length);
-                ss << "0x" << rest;
+                ss << rest;
 
             } else if (length == 0){
                 string str = ss.str();
@@ -347,92 +349,108 @@ bool Variant::convert(Type toType) const
 bool Variant::toBool() const
 {
     _assert(convert(Type::BOOLEAN), "Can't convert to boolea");
-	switch (_type)
-	{
-	case Type::NONE:
-		break;
-	case Type::BOOLEAN:return _field.boolVal;
-		break;
-	case Type::CHAR: return !!_field.charVal;
-		break;
-	case Type::BYTE: return !!_field.byteVal;
-		break;
-	case Type::INTEGER: return !!_field.intVal;
-		break;
-	case Type::UINTEGER: return !!_field.unsignedVal;
-		break;
-	case Type::FLOAT: return !(_field.floatVal == 0);
-		break;
-	case Type::DOUBLE: return !(_field.doubleVal == 0);
-		break;
-	case Type::LONGLONG: return !(_field.longLongVal == 0);
-		break;
-	case Type::ULONGLONG: return !(_field.unsignedLongLongVal == 0);
-		break;
-	case Type::STRING: {
-		const string &str = *(const string *)_field.object;
-		return !(str == "0" || str == "false");
-	}
-		break;
-	case Type::DATA:
-		break;
-	case Type::DATE:
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN:return _field.boolVal;
+            break;
+        case Type::CHAR: return !!_field.charVal;
+            break;
+        case Type::BYTE: return !!_field.byteVal;
+            break;
+        case Type::INTEGER: return !!_field.intVal;
+            break;
+        case Type::UINTEGER: return !!_field.unsignedVal;
+            break;
+        case Type::FLOAT: return !(_field.floatVal == 0);
+            break;
+        case Type::DOUBLE: return !(_field.doubleVal == 0);
+            break;
+        case Type::LONGLONG: return !(_field.longLongVal == 0);
+            break;
+        case Type::ULONGLONG: return !(_field.unsignedLongLongVal == 0);
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                return 0;
+            }
+            return !(!strcmp(static_cast<const char *>(_field.object), "0") || !strcmp(static_cast<const char *>(_field.object), "false"));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                return 0;
+            }
+            const string &str = *(const string *)_field.object;
+            return !(str == "0" || str == "false");
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
     return false;
 }
 
 char Variant::toChar() const
 {
     _assert(convert(Type::CHAR), "Can't convert to char.");
-	switch (_type)
-	{
-	case Type::NONE:
-		break;
-	case Type::BOOLEAN: return static_cast<char>(_field.boolVal);
-		break;
-	case Type::CHAR: return _field.charVal;
-		break;
-	case Type::BYTE: return _field.byteVal;
-		break;
-	case Type::INTEGER: return _field.intVal;
-		break;
-	case Type::UINTEGER: return _field.unsignedVal;
-		break;
-	case Type::FLOAT: return static_cast<char>(_field.floatVal);
-		break;
-	case Type::DOUBLE: return static_cast<char>(_field.doubleVal);
-		break;
-	case Type::LONGLONG: return static_cast<char>(_field.longLongVal);
-		break;
-	case Type::ULONGLONG: return static_cast<char>(_field.unsignedLongLongVal);
-		break;
-	case Type::STRING: {
-		const string &str = *(const string *)_field.object;
-		return static_cast<char>(atoi(str.c_str()));
-	}
-		break;
-	case Type::DATA:
-		break;
-	case Type::DATE:
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN: return static_cast<char>(_field.boolVal);
+            break;
+        case Type::CHAR: return _field.charVal;
+            break;
+        case Type::BYTE: return _field.byteVal;
+            break;
+        case Type::INTEGER: return _field.intVal;
+            break;
+        case Type::UINTEGER: return _field.unsignedVal;
+            break;
+        case Type::FLOAT: return static_cast<char>(_field.floatVal);
+            break;
+        case Type::DOUBLE: return static_cast<char>(_field.doubleVal);
+            break;
+        case Type::LONGLONG: return static_cast<char>(_field.longLongVal);
+            break;
+        case Type::ULONGLONG: return static_cast<char>(_field.unsignedLongLongVal);
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                return 0;
+            }
+            return atoi(static_cast<const char *>(_field.object));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                return 0;
+            }
+            const string &str = *(const string *)_field.object;
+            return static_cast<char>(atoi(str.c_str()));
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
     return 0;
 }
 
@@ -444,46 +462,54 @@ unsigned char Variant::toByte() const
 int Variant::toInt() const
 {
 	_assert(convert(Type::INTEGER), "Can't convert to integer.");
-	switch (_type)
-	{
-	case Type::NONE:
-		break;
-	case Type::BOOLEAN: return static_cast<int>(_field.boolVal);
-		break;
-	case Type::CHAR: return _field.charVal;
-		break;
-	case Type::BYTE: return _field.byteVal;
-		break;
-	case Type::INTEGER: return _field.intVal;
-		break;
-	case Type::UINTEGER: return _field.unsignedVal;
-		break;
-	case Type::FLOAT: return static_cast<int>(_field.floatVal);
-		break;
-	case Type::DOUBLE: return static_cast<int>(_field.doubleVal);
-		break;
-	case Type::LONGLONG: return static_cast<int>(_field.longLongVal);
-		break;
-	case Type::ULONGLONG: return static_cast<int>(_field.unsignedLongLongVal);
-		break;
-	case Type::STRING: {
-		const string &str = *(const string *)_field.object;
-		return static_cast<int>(atoi(str.c_str()));
-	}
-		break;
-	case Type::DATA:
-		break;
-	case Type::DATE:
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN: return static_cast<int>(_field.boolVal);
+            break;
+        case Type::CHAR: return _field.charVal;
+            break;
+        case Type::BYTE: return _field.byteVal;
+            break;
+        case Type::INTEGER: return _field.intVal;
+            break;
+        case Type::UINTEGER: return _field.unsignedVal;
+            break;
+        case Type::FLOAT: return static_cast<int>(_field.floatVal);
+            break;
+        case Type::DOUBLE: return static_cast<int>(_field.doubleVal);
+            break;
+        case Type::LONGLONG: return static_cast<int>(_field.longLongVal);
+            break;
+        case Type::ULONGLONG: return static_cast<int>(_field.unsignedLongLongVal);
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                return 0;
+            }
+            return atof(static_cast<const char *>(_field.object));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                return 0;
+            }
+            const string &str = *(const string *)_field.object;
+            return static_cast<int>(atoi(str.c_str()));
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
 	return 0;
 }
 
@@ -502,92 +528,108 @@ float Variant::toFloat() const
 double Variant::toDouble() const
 {
 	_assert(convert(Type::DOUBLE), "Can't convert to double.");
-	switch (_type)
-	{
-	case Type::NONE:
-		break;
-	case Type::BOOLEAN: return static_cast<double>(_field.boolVal);
-		break;
-	case Type::CHAR: return _field.charVal;
-		break;
-	case Type::BYTE: return _field.byteVal;
-		break;
-	case Type::INTEGER: return _field.intVal;
-		break;
-	case Type::UINTEGER: return _field.unsignedVal;
-		break;
-	case Type::FLOAT: return static_cast<double>(_field.floatVal);
-		break;
-	case Type::DOUBLE: return static_cast<double>(_field.doubleVal);
-		break;
-	case Type::LONGLONG: return static_cast<double>(_field.longLongVal);
-		break;
-	case Type::ULONGLONG: return static_cast<double>(_field.unsignedLongLongVal);
-		break;
-	case Type::STRING: {
-		const string &str = *(const string *)_field.object;
-		return static_cast<double>(atof(str.c_str()));
-	}
-		break;
-	case Type::DATA:
-		break;
-	case Type::DATE:
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN: return static_cast<double>(_field.boolVal);
+            break;
+        case Type::CHAR: return _field.charVal;
+            break;
+        case Type::BYTE: return _field.byteVal;
+            break;
+        case Type::INTEGER: return _field.intVal;
+            break;
+        case Type::UINTEGER: return _field.unsignedVal;
+            break;
+        case Type::FLOAT: return static_cast<double>(_field.floatVal);
+            break;
+        case Type::DOUBLE: return static_cast<double>(_field.doubleVal);
+            break;
+        case Type::LONGLONG: return static_cast<double>(_field.longLongVal);
+            break;
+        case Type::ULONGLONG: return static_cast<double>(_field.unsignedLongLongVal);
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                return 0;
+            }
+            return atof(static_cast<const char *>(_field.object));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                return 0;
+            }
+            const string &str = *(const string *)_field.object;
+            return static_cast<double>(atof(str.c_str()));
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
 	return 0.0;
 }
 
 long long Variant::toLongLong() const
 {
 	_assert(convert(Type::LONGLONG), "Can't convert to long long.");
-	switch (_type)
-	{
-	case Type::NONE:
-		break;
-	case Type::BOOLEAN: return static_cast<long long>(_field.boolVal);
-		break;
-	case Type::CHAR: return _field.charVal;
-		break;
-	case Type::BYTE: return _field.byteVal;
-		break;
-	case Type::INTEGER: return _field.intVal;
-		break;
-	case Type::UINTEGER: return _field.unsignedVal;
-		break;
-	case Type::FLOAT: return static_cast<long long>(_field.floatVal);
-		break;
-	case Type::DOUBLE: return static_cast<long long>(_field.doubleVal);
-		break;
-	case Type::LONGLONG: return static_cast<long long>(_field.longLongVal);
-		break;
-	case Type::ULONGLONG: return static_cast<long long>(_field.unsignedLongLongVal);
-		break;
-	case Type::STRING: {
-		const string &str = *(const string *)_field.object;
-		return static_cast<long long>(atoll(str.c_str()));
-	}
-		break;
-	case Type::DATA:
-		break;
-	case Type::DATE:
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN: return static_cast<long long>(_field.boolVal);
+            break;
+        case Type::CHAR: return _field.charVal;
+            break;
+        case Type::BYTE: return _field.byteVal;
+            break;
+        case Type::INTEGER: return _field.intVal;
+            break;
+        case Type::UINTEGER: return _field.unsignedVal;
+            break;
+        case Type::FLOAT: return static_cast<long long>(_field.floatVal);
+            break;
+        case Type::DOUBLE: return static_cast<long long>(_field.doubleVal);
+            break;
+        case Type::LONGLONG: return static_cast<long long>(_field.longLongVal);
+            break;
+        case Type::ULONGLONG: return static_cast<long long>(_field.unsignedLongLongVal);
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                return 0;
+            }
+            return atoll(static_cast<const char *>(_field.object));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                return 0;
+            }
+            const string &str = *(const string *)_field.object;
+            return static_cast<long long>(atoll(str.c_str()));
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
 	return 0;
 }
 
@@ -595,6 +637,12 @@ unsigned long long Variant::toULongLong() const
 {
 	_assert(convert(Type::ULONGLONG), "Can't convert to unsigned long long.");
 	return static_cast<unsigned long long>(toLongLong());
+}
+
+const char *Variant::toCString() const
+{
+    _assert(_type == Type::CSTRING, "");
+    return static_cast<const char *>(_field.object);
 }
 
 string Variant::toString()
@@ -607,43 +655,44 @@ string Variant::toString()
 		return *static_cast<string *>(_field.object);
 	}
 	stringstream ss;
-	switch (_type)
-	{
-	case Type::NONE: ss << "(null)";
-		break;
-	case Type::BOOLEAN: ss << (_field.boolVal ? "true" : "false");
-		break;
-	case Type::CHAR: ss << _field.charVal;
-		break;
-	case Type::BYTE: ss << _field.byteVal;
-		break;
-	case Type::INTEGER: ss << _field.intVal;
-		break;
-	case Type::UINTEGER: ss << _field.unsignedVal;
-		break;
-	case Type::FLOAT: ss << _field.floatVal;
-		break;
-	case Type::DOUBLE: ss << _field.doubleVal;
-		break;
-	case Type::LONGLONG: ss << _field.longLongVal;
-		break;
-	case Type::ULONGLONG: ss << _field.unsignedLongLongVal;
-		break;
-	case Type::STRING:
-		break;
-	case Type::DATA:
-		break;
-    case Type::DATE: ss << *static_cast<Date *>(_field.object);
-		break;
-	case Type::VARIANTVECTOR:
-		break;
-	case Type::VARIANTMAP:
-		break;
-	case Type::VARIANTMAPINTKEY:
-		break;
-	default:
-		break;
-	}
+    switch (_type) {
+        case Type::NONE: ss << "(null)";
+            break;
+        case Type::BOOLEAN: ss << (_field.boolVal ? "true" : "false");
+            break;
+        case Type::CHAR: ss << _field.charVal;
+            break;
+        case Type::BYTE: ss << _field.byteVal;
+            break;
+        case Type::INTEGER: ss << _field.intVal;
+            break;
+        case Type::UINTEGER: ss << _field.unsignedVal;
+            break;
+        case Type::FLOAT: ss << _field.floatVal;
+            break;
+        case Type::DOUBLE: ss << _field.doubleVal;
+            break;
+        case Type::LONGLONG: ss << _field.longLongVal;
+            break;
+        case Type::ULONGLONG: ss << _field.unsignedLongLongVal;
+            break;
+        case Type::CSTRING: ss << static_cast<const char *>(_field.object);
+            break;
+        case Type::STRING:
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE: ss << *static_cast<Date *>(_field.object);
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+        default:
+            break;
+    }
 	return ss.str();
 }
 
@@ -1047,6 +1096,8 @@ void Variant::clear()
         SAFE_DELETE(VariantMap *);
     } else if (_type == Type::VARIANTMAPINTKEY) {
         SAFE_DELETE(VariantMapIntKey *);
+    } else {
+        parameterAssert(_type <= Type::VARIANTMAPINTKEY);
     }
 
     _type = Type::NONE;
@@ -1060,6 +1111,7 @@ void Variant::reset(Type type)
         return;
     }
     clear();
+    _type = type;
     if (_type == Type::STRING) {
         _field.object = new (nothrow) string;
     } else if (_type == Type::DATA) {
@@ -1073,7 +1125,6 @@ void Variant::reset(Type type)
     } else if (_type == Type::VARIANTMAPINTKEY) {
         _field.object = new (nothrow) VariantMapIntKey;
     }
-	_type = type;
 }
 
 FMDB_END

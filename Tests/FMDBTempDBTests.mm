@@ -30,6 +30,7 @@ static string populatedDatabasePath = "/tmp/tmp-populated.db";
         db->open();
         [self populateDatabase:db];
         db->close();
+        delete db;
     }
 }
 

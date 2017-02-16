@@ -208,14 +208,11 @@ Variant FMResultSet::operator[](int columnIndex) const
 
     if (columnType == SQLITE_INTEGER) {
         returnValue = longLongForColumnIndex(columnIndex);
-    }
-    else if (columnType == SQLITE_FLOAT) {
+    } else if (columnType == SQLITE_FLOAT) {
         returnValue = doubleForColumnIndex(columnIndex);
-    }
-    else if (columnType == SQLITE_BLOB) {
+    } else if (columnType == SQLITE_BLOB) {
         returnValue = *dataForColumnIndex(columnIndex);
-    }
-    else {
+    } else {
         //default to a string for everything else
         returnValue = *stringForColumnIndex(columnIndex);
     }

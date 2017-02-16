@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */; };
+		FB82D6941E5555EC007D6E15 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
 		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
 		FB88CB181E4C4600005EEECD /* FMDatabaseQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB101E4C4600005EEECD /* FMDatabaseQueue.cpp */; };
@@ -25,7 +26,6 @@
 		FBA2F8321E51BBD500589450 /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
 		FBA2F8331E51BBD500589450 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
 		FBA2F8341E51BBD500589450 /* Variant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */; };
-		FBA2F8351E51BFDC00589450 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
 		FBA2F8371E51C05400589450 /* FMResultSetTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FBA2F8361E51C05400589450 /* FMResultSetTests.mm */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +62,10 @@
 		FB8D2D881E4D82B70060F9F3 /* Date.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Date.hpp; sourceTree = "<group>"; };
 		FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Variant.cpp; sourceTree = "<group>"; };
 		FB8D2D8D1E4DBB380060F9F3 /* Variant.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Variant.hpp; sourceTree = "<group>"; };
+		FB93DE641E5474A4000B6ABB /* shell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shell.c; sourceTree = "<group>"; };
+		FB93DE651E5474A4000B6ABB /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		FB93DE661E5474A4000B6ABB /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		FB93DE671E5474A4000B6ABB /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
 		FBA2F8241E51BB4E00589450 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBA2F8281E51BB4E00589450 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDBTempDBTests.mm; sourceTree = "<group>"; };
@@ -82,7 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBA2F8351E51BFDC00589450 /* libsqlite3.0.tbd in Frameworks */,
+				FB82D6941E5555EC007D6E15 /* libsqlite3.0.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +115,7 @@
 		FB88CB051E4C45E8005EEECD /* FMDB-CPP */ = {
 			isa = PBXGroup;
 			children = (
+				FB93DE631E5474A4000B6ABB /* sqlite-amalgamation-3170000 */,
 				FB88CB0D1E4C4600005EEECD /* c++ */,
 				FB88CB061E4C45E8005EEECD /* main.cpp */,
 			);
@@ -146,6 +151,17 @@
 				FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FB93DE631E5474A4000B6ABB /* sqlite-amalgamation-3170000 */ = {
+			isa = PBXGroup;
+			children = (
+				FB93DE641E5474A4000B6ABB /* shell.c */,
+				FB93DE651E5474A4000B6ABB /* sqlite3.c */,
+				FB93DE661E5474A4000B6ABB /* sqlite3.h */,
+				FB93DE671E5474A4000B6ABB /* sqlite3ext.h */,
+			);
+			path = "sqlite-amalgamation-3170000";
 			sourceTree = "<group>";
 		};
 		FBA2F8251E51BB4E00589450 /* Tests */ = {

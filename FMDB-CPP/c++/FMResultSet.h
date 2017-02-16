@@ -81,7 +81,7 @@ public:
     Variant operator[](const string &columnName) const { return this->operator[](columnIndexForName(columnName)); }
 
     Variant objectForColumnIndex(int columnIndex) const;
-    Variant objectForColumn(const string &columnName) const { return objectForColumnIndex(columnIndexForName(columnName)); }
+    Variant objectForColumnName(const string &columnName) const { return objectForColumnIndex(columnIndexForName(columnName)); }
 
 #if defined(NS_CC)
     // 以后需要改成自己写的Value class
@@ -92,6 +92,7 @@ public:
     bool columnIsNull(const string &columnName) const { return columnIndexIsNull(columnIndexForName(columnName)); }
     bool columnIndexIsNull(int columnIndex) const;
 
+    FMStatement *getStatement() const { return _statement; }
 	void setStatement(FMStatement *stmt) { _statement = stmt; }
 	void setParentDB(FMDatabase *db) { _parentDB = db; }
 	void setQuery(const string &query) { _query = query; }

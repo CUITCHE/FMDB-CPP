@@ -15,7 +15,9 @@ using namespace std;
 
 FMDB_BEGIN
 
-FMDatabase::FMDatabase(const string &path)
+const string FMDatabaseNullFilePath = "";
+
+FMDatabase::FMDatabase(const string &path/* = FMDatabaseNullFilePath*/)
 :_logsErrors(true)
 ,_crashOnErrors(false)
 ,_traceExecution(0)
@@ -25,9 +27,12 @@ FMDatabase::FMDatabase(const string &path)
 ,_inTransaction(0)
 ,_cachedStatements(new decltype(_cachedStatements)::element_type())
 ,_openResultSets(new decltype(_openResultSets)::element_type)
-,_databasePath(path)
+,_databasePath(nullptr)
 {
     _assert(sqlite3_threadsafe(), "On no thread safe. sqlite3 might not work well.");
+    if (&path != &FMDatabaseNullFilePath) {
+        _databasePath.reset(new string(path));
+    }
 }
 
 FMDatabase::~FMDatabase()
@@ -37,10 +42,13 @@ FMDatabase::~FMDatabase()
 
 const char *FMDatabase::sqlitePath() const
 {
-    if (_databasePath.length() == 0) {
-        return "";
+    if (!_databasePath) {
+        return ":memory:";
     }
-    return _databasePath.c_str();
+    if (_databasePath->length() == 0) {
+        return ""; // this creates a temporary database (it's an sqlite thing).
+    }
+    return _databasePath->c_str();
 }
 
 bool FMDatabase::open()
@@ -125,12 +133,12 @@ bool FMDatabase::close()
 }
 
 #pragma mark SQLite information
-string FMDatabase::sqliteLibVersion() const
+string FMDatabase::sqliteLibVersion()
 {
     return string(sqlite3_libversion());
 }
 
-bool FMDatabase::isSQLiteThreadSafe() const
+bool FMDatabase::isSQLiteThreadSafe()
 {
     return sqlite3_threadsafe();
 }
@@ -417,16 +425,14 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
         sqlite3_bind_blob(inStmt, toColumn, bytes, (int)length, SQLITE_STATIC);
 	} else if (obj.isTypeOf(Variant::Type::DATE)) {
         auto &date = obj.toDate();
-#ifdef FMDB_CONCERN_STORAGE
 		sqlite3_bind_double(inStmt, toColumn, date.timeIntervalSince1970().count());
-#else
-        string dateString = Date::stringFromDate(date);
-        sqlite3_bind_text(inStmt, toColumn, dateString.c_str(), (int)dateString.size(), SQLITE_STATIC);
-#endif
-	} else if (obj.isTypeOf(Variant::Type::STRING)){
-		auto &str = obj.toString();
-		sqlite3_bind_text(inStmt, toColumn, str.c_str(), (int)str.size(), SQLITE_STATIC);
-	} else {
+	} else if (obj.isTypeOf(Variant::Type::CSTRING)){
+        sqlite3_bind_text(inStmt, toColumn, obj.toCString(), -1, SQLITE_STATIC);
+    } else if (obj.isTypeOf(Variant::Type::STRING)) {
+        auto &str = obj.toString();
+        const char *byte = str.c_str();
+        sqlite3_bind_text(inStmt, toColumn, byte, (int)str.size(), SQLITE_STATIC);
+    } else {
 #define _STR(x) #x
 		switch (obj.getType())
 		{
@@ -487,7 +493,7 @@ bool FMDatabase::executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&p
 			if (_logsErrors) {
 				fprintf(stdout, "DB Error:%d, \"%s\"\n", lastErrorCode(), lastErrorMessage().c_str());
 				fprintf(stdout, "DB Query:%s\n", sql.c_str());
-				fprintf(stdout, "DB Path:%s\n", _databasePath.c_str());
+				fprintf(stdout, "DB Path:%s\n", sqlitePath());
 			}
 			if (_crashOnErrors) {
 				fprintf(stderr, "DB Error:%d, \"%s\"\n", lastErrorCode(), lastErrorMessage().c_str());
@@ -592,28 +598,44 @@ bool FMDatabase::executeUpdateImpl(const string & sql, FMStatement * statement, 
 	return false;
 }
 
-int FMDBExecuteBulkSQLCallback(void *theBlockAsVoid, int columns, char **values, char **names) {
-
+static int FMDBExecuteBulkSQLCallback(void *theBlockAsVoid, int columns, char **values, char **names)
+{
     if (!theBlockAsVoid) {
         return SQLITE_OK;
     }
 
-    auto execCallbackBlock = (int(*)(const unordered_map<string, Variant> &))theBlockAsVoid;
+    auto execCallbackBlock = *(FMDatabase::FMDBExecuteStatementsCallbackBlock *)(theBlockAsVoid);
 
     unordered_map<string, Variant> dictionary;
     dictionary.reserve(columns);
 
     for (int i = 0; i < columns; i++) {
-        dictionary.emplace(names[i], values[i] ? values[i] : Variant::null);
+        dictionary.emplace(names[i], values[i] ? string(values[i]) : Variant::null);
     }
 
     return execCallbackBlock(dictionary);
 }
 
-bool FMDatabase::executeStatements(const string &sql, const FMDBExecuteStatementsCallbackBlock &block/* = nullptr */)
+bool FMDatabase::executeStatements(const string &sql, const FMDBExecuteStatementsCallbackBlock &block)
+{
+    parameterAssert(block);
+    char *errmsg = nullptr;
+    int rc = sqlite3_exec(sqliteHandle(),
+                          sql.c_str(),
+                          FMDBExecuteBulkSQLCallback,
+                          (void *)&block,
+                          &errmsg);
+    if (_logsErrors && errmsg) {
+        fprintf(stderr, "Error inserting batch: %s", errmsg);
+        sqlite3_free(errmsg);
+    }
+    return rc == SQLITE_OK;
+}
+
+bool FMDatabase::executeStatements(const string &sql)
 {
     char *errmsg = nullptr;
-    int rc = sqlite3_exec(sqliteHandle(), sql.c_str(), block ? FMDBExecuteBulkSQLCallback : nullptr, *block.target<void *>(), &errmsg);
+    int rc = sqlite3_exec(sqliteHandle(), sql.c_str(), nullptr, nullptr, &errmsg);
     if (_logsErrors && errmsg) {
         fprintf(stderr, "Error inserting batch: %s", errmsg);
         sqlite3_free(errmsg);
@@ -766,18 +788,20 @@ bool FMDatabase::inSavePoint(const function<void (bool*)> &block)
 #pragma mark Callback functions
 void FMDBBlockSQLiteCallBackFunction(sqlite3_context *context, int argc, sqlite3_value **argv)
 {
-    void (*block)(sqlite3_context *context, int argc, sqlite3_value **argv) = (void (*)(sqlite3_context *context, int argc, sqlite3_value **argv))(sqlite3_user_data(context));
+//    void (*block)(sqlite3_context *context, int argc, sqlite3_value **argv) = (void (*)(sqlite3_context *context, int argc, sqlite3_value **argv))();
+    auto block = *((std::function<void(sqlite3_context *, int, sqlite3_value **)> *)sqlite3_user_data(context));
     if (block) {
         block(context, argc, argv);
     }
 }
+
 void FMDatabase::makeFunctionNamed(const string &name, int maximumArgument, const function<void (void *, int, void **)> &block)
 {
     sqlite3_create_function(sqliteHandle(),
                             name.c_str(),
                             maximumArgument,
                             SQLITE_UTF8,
-                            *block.target<void *>(),
+                            (void *)&block,
                             FMDBBlockSQLiteCallBackFunction, 0, 0);
 }
 

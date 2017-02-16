@@ -31,13 +31,15 @@ class FMStatement;
 class FMResultSet;
 /*class Variant;*/
 
+extern const string FMDatabaseNullFilePath;
+
 class FMDatabase
 {
 public:
     using StatemenCacheType = unique_ptr<unordered_map<string, vector<FMStatement *>>>;
-    using FMDBExecuteStatementsCallbackBlock = function<int(const unordered_map<string, Variant> &result)>;
+    using FMDBExecuteStatementsCallbackBlock = function<int(unordered_map<string, Variant> &result)>;
 
-    FMDatabase(const string &filepath);
+    FMDatabase(const string &filepath = FMDatabaseNullFilePath);
     ~FMDatabase();
 
     bool traceExecution() const { return _traceExecution; }
@@ -51,8 +53,8 @@ public:
     bool openWithFlags(int flags, const string &vfs);
     bool close();
 
-    string sqliteLibVersion() const;
-    bool isSQLiteThreadSafe() const;
+    static string sqliteLibVersion();
+    static bool isSQLiteThreadSafe();
 
     bool isGoodConnection();
 
@@ -91,7 +93,7 @@ public:
     bool reKey(const vector<char> &key);
 
     /* General inquiry methods */
-    const string &databasePath() const { return _databasePath; };
+    const string &databasePath() const { return *_databasePath; };
     sqlite3 *sqliteHandle() const { return _db; };
 
     /* Retrieving error codes */
@@ -140,7 +142,8 @@ public:
      @note if you supply this block, it must return integer value, zero upon success (this would be a good opportunity to use SQLITE_OK), non-zero value upon failure (which will stop the bulk execution of the SQL).  If a statement returns values, the block will be called with the results from the query in NSDictionary *resultsDictionary. This may be `nullptr`(by default) if you don't care to receive any results.
      @return `YES` upon success; `NO` upon failure. If failed, you can call `<lastError>`, `<lastErrorCode>`, or `<lastErrorMessage>` for diagnostic information regarding the failure.
      */
-    bool executeStatements(const string &sql, const FMDBExecuteStatementsCallbackBlock &block = nullptr);
+    bool executeStatements(const string &sql, const FMDBExecuteStatementsCallbackBlock &block);
+    bool executeStatements(const string &sql);
 
     /** callback function */
     void makeFunctionNamed(const string &name, int maximumArgument, const function<void(void *context, int argc, void **argv)> &block);
@@ -225,7 +228,7 @@ private:
     TimeInterval _startBusyRetryTime;
     StatemenCacheType _cachedStatements;
     unique_ptr<vector<FMResultSet *>> _openResultSets;
-    const string _databasePath;
+    unique_ptr<string> _databasePath;
 };
 
 template<typename ...Args>
@@ -239,7 +242,7 @@ inline FMResultSet * FMDatabase::executeQuery(const string &sql, Args... args)
 	if (!executeQueryParametersCheck(sizeof...(args), pStmt)) { // Parameters count check
 		return nullptr;
 	}
-	bindObjects<0>(pStmt, std::forward<Args>(args)...);
+	bindObjects<1>(pStmt, std::forward<Args>(args)...);
 	return executeQueryImpl(sql, statement, pStmt);
 }
 
@@ -254,7 +257,7 @@ inline bool FMDatabase::executeUpdate(const string & sql, Args ...args)
 	if (!executeQueryParametersCheck(sizeof...(args), pStmt)) { // Parameters count check
 		return nullptr;
 	}
-	bindObjects<0>(pStmt, std::forward<Args>(args)...);
+	bindObjects<1>(pStmt, std::forward<Args>(args)...);
 	return executeUpdateImpl(sql,statement, pStmt);
 }
 
@@ -274,7 +277,7 @@ template<typename... Args>
 inline int FMDatabase::intForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->intForColumnIndex(0);
@@ -286,7 +289,7 @@ template<typename... Args>
 inline long FMDatabase::longForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->longForColumnIndex(0);
@@ -298,7 +301,7 @@ template<typename... Args>
 inline long long FMDatabase::longLongForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->longLongForColumnIndex(0);
@@ -310,7 +313,7 @@ template<typename... Args>
 inline bool FMDatabase::boolForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->boolForColumnIndex(0);
@@ -322,7 +325,7 @@ template<typename... Args>
 inline double FMDatabase::doubleForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->doubleForColumnIndex(0);
@@ -334,7 +337,7 @@ template<typename... Args>
 inline String FMDatabase::stringForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->stringForColumnIndex(0);
@@ -346,7 +349,7 @@ template<typename... Args>
 inline Data FMDatabase::dataForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->dataForColumnIndex(0);
@@ -358,7 +361,7 @@ template<typename... Args>
 inline shared_ptr<Date> FMDatabase::dateForQuery(const string &sql, Args... args)
 {
     FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
-    if (rs->next()) {
+    if (!rs->next()) {
         return 0;
     }
     auto n = rs->dateForColumnIndex(0);

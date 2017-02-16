@@ -37,10 +37,10 @@ public:
     FMStatement() {}
     ~FMStatement();
 private:
-    bool _inUse;
-    sqlite3_stmt *_statement;
+    bool _inUse = false;
+    sqlite3_stmt *_statement = 0;
     string _query;
-    long _useCount;
+    long _useCount = 0;
     
 };
 

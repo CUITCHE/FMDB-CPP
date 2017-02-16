@@ -39,12 +39,14 @@ public:
     Variant(long long v);
     Variant(unsigned long long v);
 
+    // Only support like: Variant("static c string"); Variant don't manage its memory.
+    Variant(const char *v);
+
     Variant(const VariantData &v);
     Variant(VariantData &&v);
 
     Variant(const Date &v);
 
-    Variant(const char *v);
     Variant(const string &v);
     Variant(string &&v);
 
@@ -75,6 +77,7 @@ public:
         DOUBLE,
         LONGLONG,
         ULONGLONG,
+        CSTRING,
         STRING,
         DATA,
         DATE,
@@ -116,6 +119,8 @@ public:
     double toDouble() const;
     long long toLongLong() const;
     unsigned long long toULongLong() const;
+    const char *toCString() const;
+
     string toString();
 	const Date& toDate() const;
     
