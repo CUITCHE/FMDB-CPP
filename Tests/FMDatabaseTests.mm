@@ -88,7 +88,7 @@
 {
     self.db->close();
 
-    XCTAssertFalse(self.db->executeQuery("select * from table"), @"Shouldn't get results from an empty table");
+    XCTAssertFalse(self.db->executeQuery("select * from table").lock(), @"Shouldn't get results from an empty table");
     XCTAssertTrue(self.db->hadError(), @"Should have failed");
 }
 
@@ -108,7 +108,7 @@
 
 - (void)testPragmaJournalMode
 {
-    FMResultSet *ps = self.db->executeQuery("pragma journal_mode=delete");
+    auto ps = self.db->executeQuery("pragma journal_mode=delete").lock();
     XCTAssertFalse(self.db->hadError(), @"pragma should have succeeded");
     XCTAssertTrue(ps, @"Result set should be non-nil");
     XCTAssertTrue(ps->next(), @"Result set should have a next result");
@@ -135,7 +135,7 @@
     self.db->executeUpdate("insert into ull (a) values (?)", ULLONG_MAX);
     XCTAssertFalse(self.db->hadError(), @"Shouldn't have any errors");
 
-    FMResultSet *rs = self.db->executeQuery("select a from ull");
+    auto rs = self.db->executeQuery("select a from ull").lock();
     while (rs->next()) {
         XCTAssertEqual(rs->unsignedLongLongForColumnIndex(0), ULLONG_MAX, @"Result should be ULLONG_MAX");
         XCTAssertEqual(rs->unsignedLongLongForColumn("a"), ULLONG_MAX, @"Result should be ULLONG_MAX");
@@ -148,7 +148,7 @@
 
 - (void)testSelectByColumnName
 {
-    FMResultSet *rs = self.db->executeQuery("select rowid,* from test where a = ?", @"hi");
+    auto rs = self.db->executeQuery("select rowid,* from test where a = ?", "hi").lock();
 
     XCTAssertTrue(rs, @"Should have a non-nil result set");
 
@@ -172,7 +172,7 @@
 
 - (void)testSelectWithIndexedAndKeyedSubscript
 {
-    FMResultSet *rs = self.db->executeQuery("select rowid, a, b, c from test");
+    auto rs = self.db->executeQuery("select rowid, a, b, c from test").lock();
 
     XCTAssertTrue(rs, @"Should have a non-nil result set");
 
@@ -198,7 +198,7 @@
     FMDatabase newDB(self.databasePath.UTF8String);
     newDB.open();
 
-    FMResultSet *rs = newDB.executeQuery("select rowid,* from test where a = ?", "hi'");
+    auto rs = newDB.executeQuery("select rowid,* from test where a = ?", "hi'").lock();
     rs->next(); // just grab one... which will keep the db locked
 
     XCTAssertFalse(self.db->executeUpdate("insert into t1 values (5)"), @"Insert should fail because the db is locked by a read");
@@ -218,7 +218,7 @@
 
     XCTAssertFalse(self.db->hadError(), @"Shouldn't have any errors");
 
-    FMResultSet *rs = self.db->executeQuery("select * from cs");
+    auto rs = self.db->executeQuery("select * from cs").lock();
     while (rs->next()) {
         VariantMap d = rs->resultDictionary();
 
@@ -240,7 +240,7 @@
 
     XCTAssertFalse(self.db->hadError(), @"Shouldn't have any errors");
 
-    FMResultSet *rs = self.db->executeQuery("select * from btest");
+    auto rs = self.db->executeQuery("select * from btest").lock();
     while (rs->next()) {
 
         XCTAssertTrue(rs->boolForColumnIndex(0), @"first column should be true.");
@@ -306,7 +306,7 @@
         VariantData cd((const unsigned char *)safariCompass.bytes, (const unsigned char *)safariCompass.bytes + safariCompass.length);
         self.db->executeUpdate("insert into blobTable (a, b) values (?, ?)", "safari's compass", cd);
 
-        FMResultSet *rs = self.db->executeQuery("select b from blobTable where a = ?", "safari's compass");
+        auto rs = self.db->executeQuery("select b from blobTable where a = ?", "safari's compass").lock();
         XCTAssertTrue(rs->next());
         auto d = rs->dataForColumn("b");
         NSData *readData = [NSData dataWithBytes:d->data() length:d->size()];
@@ -329,7 +329,7 @@
     BOOL result = self.db->executeUpdate("insert into t2 values (?, ?)", nullptr, 5);
     XCTAssertTrue(result, @"Failed to insert a nil value");
 
-    FMResultSet *rs = self.db->executeQuery("select * from t2");
+    auto rs = self.db->executeQuery("select * from t2").lock();
     while (rs->next()) {
         XCTAssertFalse(rs->stringForColumnIndex(0), @"Wasn't able to retrieve a null string");
         XCTAssertEqual(*rs->stringForColumnIndex(1), "5");
@@ -342,7 +342,7 @@
 
 - (void)testNestedResultSets
 {
-    FMResultSet *rs = self.db->executeQuery("select * from t3");
+    auto rs = self.db->executeQuery("select * from t3").lock();
     while (rs->next()) {
         int foo = rs->intForColumnIndex(0);
 
@@ -350,7 +350,7 @@
 
         self.db->executeUpdate("update t3 set a = ? where a = ?", newVal, foo);
 
-        FMResultSet *rs2 = self.db->executeQuery("select a from t3 where a = ?", newVal);
+        auto rs2 = self.db->executeQuery("select a from t3 where a = ?", newVal).lock();
         rs2->next();
 
         XCTAssertEqual(rs2->intForColumnIndex(0), newVal);
@@ -369,7 +369,7 @@
     self.db->executeUpdate("insert into nulltest (a, b) values (?, ?)", Variant::null, @"a");
     self.db->executeUpdate("insert into nulltest (a, b) values (?, ?)", nil, @"b");
 
-    FMResultSet *rs = self.db->executeQuery("select * from nulltest");
+    auto rs = self.db->executeQuery("select * from nulltest").lock();
 
     while (rs->next()) {
         XCTAssertFalse(rs->stringForColumnIndex(0));
@@ -388,7 +388,7 @@
     self.db->executeUpdate("create table datetest (a double, b double, c double)");
     self.db->executeUpdate("insert into datetest (a, b, c) values (?, ?, 0)" , Variant::null, date);
 
-    FMResultSet *rs = self.db->executeQuery("select * from datetest");
+    auto rs = self.db->executeQuery("select * from datetest").lock();
 
     XCTAssertTrue(rs);
 
@@ -424,15 +424,17 @@
 
     self.db->executeUpdate("create table nulltest2 (s text, d data, i integer, f double, b integer)");
 
-    self.db->executeUpdate("insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , "Hi", [self NSDataToVarintData:safariCompass], 12, 4.4f, true);
+    auto vd = [self NSDataToVarintData:safariCompass];
+    fprintf(stderr, "--%s--\n", Variant(vd).description().c_str());
+    fflush(stderr);
+    NSData *copy = [NSData dataWithBytes:vd.data() length:vd.size()];
+    XCTAssertEqualObjects(safariCompass, copy);
+    self.db->executeUpdate("insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , "Hi", vd, 12, 4.4f, true);
     self.db->executeUpdate("insert into nulltest2 (s, d, i, f, b) values (?, ?, ?, ?, ?)" , nil, nil, nil, nil, Variant::null);
 
-    FMResultSet *rs = self.db->executeQuery("select * from nulltest2");
-
+    auto rs = self.db->executeQuery("select * from nulltest2").lock();
     while (rs->next()) {
-
         int i = rs->intForColumnIndex(2);
-
         if (i == 12) {
             // it's the first row we inserted.
             XCTAssertFalse(rs->columnIndexIsNull(0));
@@ -459,8 +461,7 @@
 
             XCTAssertEqual(rs->longForColumn("i"), 12l);
             XCTAssertEqual(rs->longLongForColumn("i"), 12ll);
-        }
-        else {
+        } else {
             // let's test various null things.
 
             XCTAssertTrue(rs->columnIndexIsNull(0));
@@ -485,7 +486,7 @@
     self.db->executeUpdate("create table utest (a text)");
     self.db->executeUpdate("insert into utest values (?)", "/übertest");
 
-    FMResultSet *rs = self.db->executeQuery("select * from utest where a = ?", "/übertest");
+    auto rs = self.db->executeQuery("select * from utest where a = ?", "/übertest").lock();
     XCTAssertTrue(rs->next());
     rs->close();
     XCTAssertFalse(self.db->hasOpenResultSets(), @"Shouldn't have any open result sets");
@@ -522,7 +523,7 @@
     XCTAssertTrue(self.db->executeUpdate("create table t4 (a text, b text)"));
     self.db->executeUpdate("insert into t4 (a, b) values (?, ?)", "one", "two");
 
-    FMResultSet *rs = self.db->executeQuery("select t4.a as 't4.a', t4.b from t4;");
+    auto rs = self.db->executeQuery("select t4.a as 't4.a', t4.b from t4;").lock();
 
     XCTAssertTrue(rs);
 
@@ -648,7 +649,7 @@
 
     self.db->executeUpdate("attach database '/tmp/attachme.db' as attack");
 
-    FMResultSet *rs = self.db->executeQuery("select * from attack.attached");
+    auto rs = self.db->executeQuery("select * from attack.attached").lock();
     XCTAssertTrue(rs);
     XCTAssertTrue(rs->next());
     rs->close();
@@ -696,7 +697,7 @@
 
 - (void)testPragmaDatabaseList
 {
-    FMResultSet *rs = self.db->executeQuery("pragma database_list");
+    auto rs = self.db->executeQuery("pragma database_list").lock();
     int counter = 0;
     while (rs->next()) {
         counter++;
@@ -713,8 +714,8 @@
     self.db->executeUpdate("INSERT INTO testCacheStatements (key, value) VALUES (1, 2)");
     self.db->executeUpdate("INSERT INTO testCacheStatements (key, value) VALUES (2, 4)");
 
-    XCTAssertTrue(self.db->executeQuery("SELECT * FROM testCacheStatements WHERE key=1")->next());
-    XCTAssertTrue(self.db->executeQuery("SELECT * FROM testCacheStatements WHERE key=1")->next());
+    XCTAssertTrue(self.db->executeQuery("SELECT * FROM testCacheStatements WHERE key=1").lock()->next());
+    XCTAssertTrue(self.db->executeQuery("SELECT * FROM testCacheStatements WHERE key=1").lock()->next());
 }
 
 - (void)testStatementCachingWorks
@@ -731,17 +732,17 @@
     //  the second time through all statements come from the cache.
     for (int i = 1; i <= 2; i++ ) {
 
-        FMResultSet* rs1 = self.db->executeQuery("SELECT rowid, * FROM testStatementCaching WHERE value = ?", 1); // results in 2 rows...
+        auto rs1 = self.db->executeQuery("SELECT rowid, * FROM testStatementCaching WHERE value = ?", 1).lock(); // results in 2 rows...
         XCTAssertTrue(rs1);
         XCTAssertTrue(rs1->next());
 
         // confirm that we're seeing the benefits of caching.
-        XCTAssertEqual(rs1->getStatement()->getUseCount() , (long)i);
+        XCTAssertEqual(rs1->getStatement().lock()->getUseCount() , (long)i);
 
-        FMResultSet* rs2 = self.db->executeQuery("SELECT rowid, * FROM testStatementCaching WHERE value = ?", 2); // results in 1 row
+        auto rs2 = self.db->executeQuery("SELECT rowid, * FROM testStatementCaching WHERE value = ?", 2).lock(); // results in 1 row
         XCTAssertTrue(rs2);
         XCTAssertTrue(rs2->next());
-        XCTAssertEqual(rs2->getStatement()->getUseCount(), (long)i);
+        XCTAssertEqual(rs2->getStatement().lock()->getUseCount(), (long)i);
 
         // This is the primary check - with the old implementation of statement caching, rs2 would have rejiggered the (cached) statement used by rs1, making this test fail to return the 2nd row in rs1.
         XCTAssertTrue(rs1->next());
@@ -789,7 +790,7 @@
     XCTAssertTrue(self.db->executeUpdate("create table colNameTest (a, b, c, d)"));
     XCTAssertTrue(self.db->executeUpdate("insert into colNameTest values (1, 2, 3, 4)"));
 
-    FMResultSet *ars = self.db->executeQuery("select * from colNameTest");
+    auto ars = self.db->executeQuery("select * from colNameTest").lock();
     XCTAssertTrue(ars);
 
     auto d = ars->columnNameToIndexMap();
@@ -827,7 +828,7 @@
     });
 
     int rowCount = 0;
-    FMResultSet *ars = self.db->executeQuery("select * from ftest where StringStartsWithH(foo)");
+    auto ars = self.db->executeQuery("select * from ftest where StringStartsWithH(foo)").lock();
     while (ars->next()) {
         rowCount++;
 
@@ -883,7 +884,7 @@
     BOOL success = self.db->executeUpdate("insert into charBoolTest values (?, ?, ?)", YES, NO, 'x');
     XCTAssertTrue(success, @"Unable to insert values");
 
-    FMResultSet *rs = self.db->executeQuery("select * from charBoolTest");
+    auto rs = self.db->executeQuery("select * from charBoolTest").lock();
     XCTAssertTrue(rs);
 
     XCTAssertTrue(rs->next(), @"Did not return row");
@@ -997,7 +998,7 @@
     XCTAssert(db.executeUpdate("create table foo (bar text)"), @"create failed");
     NSString *value = @"baz";
     XCTAssert(db.executeUpdate("insert into foo (bar) values (?)" , value.UTF8String), @"insert failed");
-    FMResultSet *rs = db.executeQuery("select bar from foo");
+    auto rs = db.executeQuery("select bar from foo").lock();
     db.closeOpenResultSets();
     XCTAssertFalse(rs->next(), @"step should have failed");
 }

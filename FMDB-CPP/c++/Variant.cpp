@@ -280,22 +280,22 @@ static string visit(const Variant &v, int depth)
             auto &data = v.toVariantData();
             const unsigned char *d = data.data();
             size_t length = data.size();
-            const long long *pll = (const long long *)d;
+            const unsigned int *pll = (const unsigned int *)d;
             ss.setf(ios::showbase);
             ss.setf(ios_base::hex, ios_base::basefield);
             ss << "<";
-            while (length >= 8) {
+            while (length >= 4) {
                 ss << *pll++ << " ";
-                length -= 8;
+                length -= 4;
             }
             if (length > 0) {
-                long long rest = 0;
+                unsigned int rest = 0;
                 memcpy(&rest, pll, length);
-                ss << rest;
+                ss << rest << ">";
 
             } else if (length == 0){
                 string str = ss.str();
-                str.erase(str.length() - 1, 1);
+                str.replace(str.length() - 1, 1, ">");
                 return str;
             } else {
                 _assert(false, "length(%zu) must be >= 0.", length);
@@ -909,6 +909,13 @@ Variant & Variant::operator=(const std::string & v)
 	reset(Type::STRING);
 	*static_cast<string *>(_field.object) = v;
 	return *this;
+}
+
+Variant & Variant::operator=(std::string && v)
+{
+    reset(Type::STRING);
+    *static_cast<string *>(_field.object) = std::move(v);
+    return *this;
 }
 
 Variant & Variant::operator=(const Date & v)

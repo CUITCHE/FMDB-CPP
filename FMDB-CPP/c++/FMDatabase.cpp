@@ -207,16 +207,18 @@ bool FMDatabase::hasOpenResultSets()
 void FMDatabase::closeOpenResultSets()
 {
     for (auto &tmp : *_openResultSets) {
-        tmp->setParentDB(nullptr);
-        tmp->close();
-        delete tmp;
+        if (tmp) {
+            tmp->close();
+        }
     }
     _openResultSets->clear();
 }
 
 void FMDatabase::resultSetDidClose(FMResultSet *resultSet)
 {
-    auto iter = std::find(_openResultSets->begin(), _openResultSets->end(), resultSet);
+    auto iter = std::find_if(_openResultSets->begin(), _openResultSets->end(), [=](const shared_ptr<FMResultSet> &rhs) {
+        return rhs.get() == resultSet;
+    });
     if (iter != _openResultSets->end()) {
         _openResultSets->erase(iter);
     }
@@ -226,22 +228,24 @@ void FMDatabase::resultSetDidClose(FMResultSet *resultSet)
 void FMDatabase::clearCachedStatements()
 {
     for (auto &pair : *_cachedStatements) {
-        for (auto statement : pair.second) {
-            delete statement;
+        for (auto &stmt : pair.second) {
+            if (stmt) {
+                stmt->close();
+            }
         }
     }
     _cachedStatements->clear();
 }
 
-FMStatement *FMDatabase::cachedStatementForQuery(const string &query)
+shared_ptr<FMStatement> FMDatabase::cachedStatementForQuery(const string &query)
 {
     auto iter = _cachedStatements->find(query);
     if (iter == _cachedStatements->end()) {
-        return nullptr;
+        return shared_ptr<FMStatement>();
     }
     auto &statements = _cachedStatements->at(query);
-    FMStatement *st = nullptr;
-    for (auto tmp : statements) {
+    shared_ptr<FMStatement> st;
+    for (auto &tmp : statements) {
         if (!tmp->inUse()) {
             st = tmp;
             break;
@@ -250,13 +254,13 @@ FMStatement *FMDatabase::cachedStatementForQuery(const string &query)
     return st;
 }
 
-void FMDatabase::setCachedStatement(FMStatement *statement, const string &query)
+void FMDatabase::setCachedStatement(shared_ptr<FMStatement> &statement, const string &query)
 {
     statement->setQueryString(query);
 
     auto iter = _cachedStatements->find(query);
     if (iter == _cachedStatements->end()) {
-        vector<FMStatement *> statements;
+        vector<shared_ptr<FMStatement>> statements;
         statements.push_back(statement);
         _cachedStatements->emplace(query, statements);
     } else {
@@ -321,7 +325,7 @@ bool FMDatabase::isGoodConnection()
     if (!_db) {
         return false;
     }
-    FMResultSet *rs = executeQuery("select name from sqlite_master where type='table'");
+    auto rs = executeQuery("select name from sqlite_master where type='table'").lock();
     if (rs) {
         rs->close();
         return true;
@@ -466,7 +470,7 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
 	}
 }
 
-bool FMDatabase::executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, FMStatement *&statement)
+bool FMDatabase::executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, shared_ptr<FMStatement> &statement)
 {
 	if (!databaseExists()) {
 		return false;
@@ -519,10 +523,10 @@ bool FMDatabase::executeQueryParametersCheck(int inputParametersCount, sqlite3_s
 	return true;
 }
 
-FMResultSet *FMDatabase::executeQueryImpl(const string & sql, FMStatement *statement, sqlite3_stmt *pStmt)
+weak_ptr<FMResultSet> FMDatabase::executeQueryImpl(const string & sql, shared_ptr<FMStatement> &statement, sqlite3_stmt *pStmt)
 {
 	if (!statement) {
-		statement = new FMStatement();
+		statement = make_shared<FMStatement>();
 		statement->setStatement(pStmt);
 
 		if (_shouldCacheStatements) {
@@ -531,7 +535,7 @@ FMResultSet *FMDatabase::executeQueryImpl(const string & sql, FMStatement *state
 	}
 
 	// the statement gets closed in rs's dealloc or [rs close];
-	FMResultSet *rs = FMResultSet::resultSet(statement, this);
+	auto rs = FMResultSet::resultSet(statement, this);
 	rs->setQuery(sql);
 
 	_openResultSets->push_back(rs);
@@ -542,7 +546,7 @@ FMResultSet *FMDatabase::executeQueryImpl(const string & sql, FMStatement *state
 	return rs;
 }
 
-bool FMDatabase::executeUpdateImpl(const string & sql, FMStatement * statement, sqlite3_stmt * pStmt)
+bool FMDatabase::executeUpdateImpl(const string & sql, shared_ptr<FMStatement> &statement, sqlite3_stmt * pStmt)
 {
 	int rc = sqlite3_step(pStmt);
 	if (rc == SQLITE_DONE) {
@@ -576,7 +580,7 @@ bool FMDatabase::executeUpdateImpl(const string & sql, FMStatement * statement, 
 		}
 	}
 	if (_shouldCacheStatements && !statement) {
-		statement = new FMStatement;
+		statement = make_shared<FMStatement>();
 		statement->setStatement(pStmt);
 		setCachedStatement(statement, sql);
 	}

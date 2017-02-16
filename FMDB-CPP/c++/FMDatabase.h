@@ -36,7 +36,7 @@ extern const string FMDatabaseNullFilePath;
 class FMDatabase
 {
 public:
-    using StatemenCacheType = unique_ptr<unordered_map<string, vector<FMStatement *>>>;
+    using StatemenCacheType = unique_ptr<unordered_map<string, vector<shared_ptr<FMStatement>>>>;
     using FMDBExecuteStatementsCallbackBlock = function<int(unordered_map<string, Variant> &result)>;
 
     FMDatabase(const string &filepath = FMDatabaseNullFilePath);
@@ -118,7 +118,7 @@ public:
      @note DON'T release the return value.
 	 */
 	template<typename... Args>
-	DO_NOT_RELEASE(FMResultSet *)executeQuery(const string &sql, Args... args);
+	weak_ptr<FMResultSet> executeQuery(const string &sql, Args... args);
 
 	/**
 	 Execute single update statement
@@ -192,21 +192,24 @@ public:
     uint32_t userVersion() const;
     void setUserVersion(uint32_t version);
 private:
-	bool executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, FMStatement *&statement);
+	bool executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, shared_ptr<FMStatement> &statement);
 	bool executeQueryParametersCheck(int inputParametersCount, sqlite3_stmt *pStmt);
-	FMResultSet *executeQueryImpl(const string &sql, FMStatement *statement, sqlite3_stmt *pStmt);
+
+	weak_ptr<FMResultSet> executeQueryImpl(const string &sql, shared_ptr<FMStatement> &statement, sqlite3_stmt *pStmt);
+
 	template<int paramN, typename... Args, typename T>
 	void bindObjects(sqlite3_stmt *inStmt, const T &v, Args... args);
+
 	template<int paramN>
 	void bindObjects(sqlite3_stmt *inStmt);
 
-	bool executeUpdateImpl(const string &sql, FMStatement *statement, sqlite3_stmt *pStmt);
+	bool executeUpdateImpl(const string &sql, shared_ptr<FMStatement> &statement, sqlite3_stmt *pStmt);
 private:
     const char *sqlitePath() const;
     friend int FMDBDatabaseBusyHandler(void *f, int count);
 
-    FMStatement *cachedStatementForQuery(const string &query);
-    void setCachedStatement(FMStatement *statement, const string &query);
+    shared_ptr<FMStatement> cachedStatementForQuery(const string &query);
+    void setCachedStatement(shared_ptr<FMStatement> &statement, const string &query);
 
     void warnInUse() const;
     bool databaseExists() const;
@@ -227,20 +230,20 @@ private:
     TimeInterval _maxBusyRetryTimeInterval = TimeInterval(2); // 2 seconds
     TimeInterval _startBusyRetryTime;
     StatemenCacheType _cachedStatements;
-    unique_ptr<vector<FMResultSet *>> _openResultSets;
+    unique_ptr<vector<shared_ptr<FMResultSet>>> _openResultSets;
     unique_ptr<string> _databasePath;
 };
 
 template<typename ...Args>
-inline FMResultSet * FMDatabase::executeQuery(const string &sql, Args... args)
+inline weak_ptr<FMResultSet> FMDatabase::executeQuery(const string &sql, Args... args)
 {
 	sqlite3_stmt *pStmt		= 0;
-	FMStatement *statement	= 0;
+	shared_ptr<FMStatement> statement;
 	if (!executeQueryPrepareAndCheck(sql, pStmt, statement)) { // Sqlite environment check
-		return nullptr;
+		return weak_ptr<FMResultSet>();
 	}
 	if (!executeQueryParametersCheck(sizeof...(args), pStmt)) { // Parameters count check
-		return nullptr;
+		return weak_ptr<FMResultSet>();
 	}
 	bindObjects<1>(pStmt, std::forward<Args>(args)...);
 	return executeQueryImpl(sql, statement, pStmt);
@@ -250,7 +253,7 @@ template<typename ...Args>
 inline bool FMDatabase::executeUpdate(const string & sql, Args ...args)
 {
 	sqlite3_stmt *pStmt = 0;
-	FMStatement *statement = 0;
+	shared_ptr<FMStatement> statement;
 	if (!executeQueryPrepareAndCheck(sql, pStmt, statement)) { // Sqlite environment check
 		return nullptr;
 	}
@@ -276,7 +279,7 @@ inline void FMDatabase::bindObjects(sqlite3_stmt * inStmt)
 template<typename... Args>
 inline int FMDatabase::intForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -288,7 +291,7 @@ inline int FMDatabase::intForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline long FMDatabase::longForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -300,7 +303,7 @@ inline long FMDatabase::longForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline long long FMDatabase::longLongForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -312,7 +315,7 @@ inline long long FMDatabase::longLongForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline bool FMDatabase::boolForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -324,7 +327,7 @@ inline bool FMDatabase::boolForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline double FMDatabase::doubleForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -336,7 +339,7 @@ inline double FMDatabase::doubleForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline String FMDatabase::stringForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -348,7 +351,7 @@ inline String FMDatabase::stringForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline Data FMDatabase::dataForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }
@@ -360,7 +363,7 @@ inline Data FMDatabase::dataForQuery(const string &sql, Args... args)
 template<typename... Args>
 inline shared_ptr<Date> FMDatabase::dateForQuery(const string &sql, Args... args)
 {
-    FMResultSet *rs = executeQuery(sql, std::forward<Args>(args)...);
+    auto rs = executeQuery(sql, std::forward<Args>(args)...).lock();
     if (!rs->next()) {
         return 0;
     }

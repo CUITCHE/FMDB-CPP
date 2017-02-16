@@ -21,20 +21,23 @@ using namespace std;
 
 FMDB_BEGIN
 
-FMResultSet *FMResultSet::resultSet(FMStatement *statement, FMDatabase *parentDatabase)
+shared_ptr<FMResultSet> FMResultSet::resultSet(shared_ptr<FMStatement> &statement, FMDatabase *parentDatabase)
 {
-	FMResultSet *rs = new FMResultSet();
-	rs->setStatement(statement);
-	rs->setParentDB(parentDatabase);
-	statement->setInUse(true);
-	return rs;
+	return make_shared<FMResultSet>(parentDatabase, statement);
+}
+
+FMResultSet::FMResultSet(FMDatabase *db, shared_ptr<FMStatement> &stmt)
+:_parentDB(db)
+,_statement(stmt)
+{
+    stmt->setInUse(true);
 }
 
 void FMResultSet::close()
 {
 	if (_statement)	 {
 		_statement->reset();
-		_statement = nullptr;
+        _statement.reset();
 	}
 
 	if (_parentDB) {

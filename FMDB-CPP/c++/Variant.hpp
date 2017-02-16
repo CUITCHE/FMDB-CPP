@@ -165,9 +165,11 @@ public:
 	Variant& operator= (const char* v);
 	/** Assignment operator, assign from string to Variant. */
 	Variant& operator= (const std::string& v);
+    /** Assignment operator, assign from string to Variant. It will use std::move internally. */
+    Variant& operator= (std::string&& v);
+
 	/** Assignment operator, assign from Date to Variant. */
 	Variant& operator= (const Date& v);
-//    Variant& operator= (std::shared_ptr<Date> &&rhs);
 
 	/** Assignment operator, assign from VariantVector to Variant. */
 	Variant& operator= (const VariantVector& v);

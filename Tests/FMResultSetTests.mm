@@ -47,7 +47,7 @@
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (1, 2)");
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (2, 4)");
 
-    FMResultSet *resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=1");
+    auto resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=1").lock();
     XCTAssert(resultSet);
     Error err;
     XCTAssertTrue(resultSet->nextWithError(&err));
@@ -65,7 +65,7 @@
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (1, 2)");
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (2, 4)");
 
-    FMResultSet *resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=1");
+    auto resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=1").lock();
     XCTAssert(resultSet);
 
     FMDatabase newDB(self.databasePath.UTF8String);
@@ -87,7 +87,7 @@
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (1, 2)");
     self.db->executeUpdate("INSERT INTO testTable (key, value) VALUES (2, 4)");
 
-    FMResultSet *resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=9");
+    auto resultSet = self.db->executeQuery("SELECT * FROM testTable WHERE key=9").lock();
     XCTAssert(resultSet);
     XCTAssertFalse(resultSet->next());
     Error error;

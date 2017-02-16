@@ -32,7 +32,8 @@ class FMStatement;
 class FMResultSet
 {
 public:
-    static FMResultSet *resultSet(FMStatement *statement, FMDatabase *parentDatabase);
+    static shared_ptr<FMResultSet> resultSet(shared_ptr<FMStatement> &statement, FMDatabase *parentDatabase);
+    FMResultSet(FMDatabase *db, shared_ptr<FMStatement> &stmt);
 	FMResultSet() { }
 	~FMResultSet() { close(); }
 
@@ -92,8 +93,8 @@ public:
     bool columnIsNull(const string &columnName) const { return columnIndexIsNull(columnIndexForName(columnName)); }
     bool columnIndexIsNull(int columnIndex) const;
 
-    FMStatement *getStatement() const { return _statement; }
-	void setStatement(FMStatement *stmt) { _statement = stmt; }
+    weak_ptr<FMStatement> getStatement() const { return _statement; }
+//	void setStatement(FMStatement *stmt) { _statement = stmt; }
 	void setParentDB(FMDatabase *db) { _parentDB = db; }
 	void setQuery(const string &query) { _query = query; }
 
@@ -102,7 +103,7 @@ public:
     VariantMap resultDictionary() const;
 private:
     FMDatabase *_parentDB;
-    FMStatement *_statement;
+    shared_ptr<FMStatement> _statement;
     string _query;
     unordered_map<string, int> _columnNameToIndexMap;
 };
