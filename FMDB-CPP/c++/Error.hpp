@@ -22,9 +22,14 @@ class Error {
 public:
     Error();
     explicit Error(const string &domain, long long code, const Variant &userInfo = Variant::null);
+    Error(Error &&other);
+    Error(const Error &) = delete;
 
     long long code() const { return _code; }
+    void setCode(long long code) { _code = code; }
+
     const string &domain();
+    void setDomain(const string &domain);
 
     const Variant& userInfo();
     void setUserInfo(const Variant &userInfo);
@@ -37,6 +42,9 @@ public:
     }
 
     bool isEmpty() const;
+
+    Error& operator=(Error &&rhs);
+    Error& operator=(const Error &) = delete;
 private:
     long long _code;
 #if __PL64__

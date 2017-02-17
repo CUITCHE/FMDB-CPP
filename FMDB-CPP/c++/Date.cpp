@@ -18,7 +18,7 @@ Date::Date()
 {
 }
 
-Date::Date(system_clock::time_point tp)
+Date::Date(time_point tp)
 :d(tp)
 {
 }
@@ -30,7 +30,8 @@ Date::Date(TimeInterval SinceReferenceDate)
 
 Date Date::clone()
 {
-    Date date(microseconds(0));
+    time_point t;
+    Date date(t);
     date.d = d;
     return date;
 }
@@ -73,14 +74,16 @@ Date Date::dateWithTimeIntervalSinceNow(TimeInterval secs)
 
 Date Date::dateWithTimeIntervalSince1970(TimeInterval secs)
 {
-    Date date(microseconds(0));
+    time_point t;
+    Date date(t);
     date.d += duration_cast<system_clock::duration>(secs);
     return date;
 }
 
 Date Date::dateWithTimeIntervalSinceReferenceDate(TimeInterval ti)
 {
-    Date date(microseconds(0));
+    time_point t;
+    Date date(t);
     date.d += duration_cast<system_clock::duration>(TimeIntervalSince1970 + ti);
     return date;
 }
@@ -106,7 +109,8 @@ Date Date::dateFromString(const string &dateString)
     struct tm tm;
     strptime(dateString.c_str(), FMDB_CPP_DATE_FORMAT, &tm);
 
-    Date date(microseconds(0));
+    time_point t;
+    Date date(t);
     date.d = system_clock::from_time_t(mktime(&tm));
     return date;
 }

@@ -19,8 +19,8 @@ extern const TimeInterval TimeIntervalSince1970;
 class Date {
     system_clock::time_point d;
 public:
-
-    explicit Date(system_clock::time_point);
+    using time_point = system_clock::time_point;
+    explicit Date(time_point);
 
     /**
      Creates and returns a new date set to the current date and time.

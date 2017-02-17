@@ -186,12 +186,8 @@ shared_ptr<Date> FMResultSet::dateForColumnIndex(int columnIndex) const
     if (sqlite3_column_type(_statement->getStatement(), columnIndex) == SQLITE_NULL || (columnIndex < 0)) {
         return shared_ptr<Date>();
     }
-    auto dateString = stringForColumnIndex(columnIndex);
-    if (!dateString) {
-        return shared_ptr<Date>();
-    }
-    auto date = Date::dateFromString(*dateString);
-    return make_shared<Date>(date);
+    auto ti = doubleForColumnIndex(columnIndex);
+    return make_shared<Date>(Date::dateWithTimeIntervalSince1970(TimeInterval(ti)));
 }
 
 const unsigned char *FMResultSet::UTF8StringForColumnIndex(int columnIndex) const

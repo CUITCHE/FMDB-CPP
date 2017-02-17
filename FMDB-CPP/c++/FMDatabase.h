@@ -175,21 +175,17 @@ public:
 
     bool tableExists(const string &tableName);
 
-    FMResultSet *getSchema();
-    FMResultSet *getTableSchema();
+    weak_ptr<FMResultSet> getSchema();
+    weak_ptr<FMResultSet> getTableSchema(const string &tableName);
 
     bool columnExistsInTable(const string &tableName, const string &columnName);
 
-    bool validateSQL(const string &sql, Error *error);
+    bool validateSQL(const string &sql, Error *error = nullptr);
 
-    uint32_t applicationID() const;
+    uint32_t applicationID();
     void setApplicationID(uint32_t appID);
 
-#if TARGET_OS_MAC && !TARGET_OS_IPHONE
-    string applicationIDString() const;
-    void setApplicationIDString(const string &aString);
-#endif
-    uint32_t userVersion() const;
+    uint32_t userVersion();
     void setUserVersion(uint32_t version);
 private:
 	bool executeQueryPrepareAndCheck(const string &sql, sqlite3_stmt *&pStmt, shared_ptr<FMStatement> &statement);

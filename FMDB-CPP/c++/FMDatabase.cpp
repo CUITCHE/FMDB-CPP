@@ -809,4 +809,138 @@ void FMDatabase::makeFunctionNamed(const string &name, int maximumArgument, cons
                             FMDBBlockSQLiteCallBackFunction, 0, 0);
 }
 
+#pragma mark convenience methods
+bool FMDatabase::tableExists(const string &_tableName)
+{
+    string tableName(_tableName);
+    std::transform(tableName.begin(), tableName.end(), tableName.begin(), std::tolower);
+
+    auto rs = executeQuery("select [sql] from sqlite_master where [type] = 'table' and lower(name) = ?", tableName).lock();
+    bool b = 0;
+    if (rs) {
+        b = rs->next();
+        rs->close();
+    }
+    return b;
+}
+
+/**
+ get table with list of tables: result colums: type[STRING], name[STRING],tbl_name[STRING],rootpage[INTEGER],sql[STRING]
+ check if table exist in database  (patch from OZLB)
+ */
+weak_ptr<FMResultSet> FMDatabase::getSchema()
+{
+    auto rs = executeQuery("SELECT type, name, tbl_name, rootpage, sql FROM (SELECT * FROM sqlite_master UNION ALL SELECT * FROM sqlite_temp_master) WHERE type != 'meta' AND name NOT LIKE 'sqlite_%' ORDER BY tbl_name, type DESC, name");
+    return rs;
+}
+
+/**
+ get table schema: result colums: cid[INTEGER], name,type [STRING], notnull[INTEGER], dflt_value[],pk[INTEGER]
+ */
+weak_ptr<FMResultSet> FMDatabase::getTableSchema(const string &tableName)
+{
+    string query("pragma table_info('");
+    query.append(tableName).append("')");
+    auto rs = executeQuery(query);
+    return rs;
+}
+
+bool FMDatabase::columnExistsInTable(const string &_tableName, const string &_columnName)
+{
+    bool b = false;
+    string tableName(_tableName);
+    string columnName(_columnName);
+    std::transform(tableName.begin(), tableName.end(), tableName.begin(), std::tolower);
+    std::transform(columnName.begin(), columnName.end(), columnName.begin(), std::tolower);
+
+    auto rs = getTableSchema(tableName).lock();
+    if (rs) {
+        while (rs->next()) {
+            auto tmp = rs->stringForColumn("name");
+            if (tmp) {
+                std::transform(tmp->begin(), tmp->end(), tmp->begin(), std::tolower);
+                if (*tmp == columnName) {
+                    b = true;
+                    break;
+                }
+            }
+        }
+        rs->close();
+    }
+    return b;
+}
+
+bool FMDatabase::validateSQL(const string &sql, Error *error/* = nullptr*/)
+{
+    sqlite3_stmt *pStmt = 0;
+    bool successed = true;
+    int rc = sqlite3_prepare_v2(_db, sql.c_str(), -1, &pStmt, 0);
+    if (rc != SQLITE_OK) {
+        successed = false;
+        if (error) {
+            *error = lastError();
+        }
+    }
+    sqlite3_finalize(pStmt);
+    return successed;
+}
+
+uint32_t FMDatabase::applicationID()
+{
+#if SQLITE_VERSION_NUMBER >= 3007017
+    uint32_t r = 0;
+    auto rs = executeQuery("pragma application_id").lock();
+    if (rs) {
+        if (rs->next()) {
+            r = rs->intForColumnIndex(0);
+        }
+        rs->close();
+    }
+    return r;
+#else
+# error Application ID functions require SQLite 3.7.17
+    return 0;
+#endif
+}
+
+void FMDatabase::setApplicationID(uint32_t appID)
+{
+#if SQLITE_VERSION_NUMBER >= 3007017
+    string query("pragma application_id=");
+    query.append(Variant(appID).toString());
+    auto rs = executeQuery(query).lock();
+    if (rs) {
+        rs->next();
+        rs->close();
+    }
+#else
+# error Application ID functions require SQLite 3.7.17
+#endif
+}
+
+uint32_t FMDatabase::userVersion()
+{
+    uint32_t r = 0;
+    auto rs = executeQuery("pragma user_version").lock();
+    if (rs) {
+        if (rs->next()) {
+            r = rs->intForColumnIndex(0);
+        }
+        rs->close();
+    }
+    return r;
+}
+
+void FMDatabase::setUserVersion(uint32_t version)
+{
+    string query("pragma user_version = ");
+    query.append(Variant(version).toString());
+    auto rs = executeQuery(query).lock();
+    if (rs) {
+        rs->next();
+        rs->close();
+    }
+}
+
+
 FMDB_END

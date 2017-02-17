@@ -29,6 +29,11 @@ Error::Error(const string &domain, long long code, const Variant &userInfo)
 {
 }
 
+Error::Error(Error &&other)
+{
+    *this = std::move(other);
+}
+
 const string& Error::domain()
 {
     if (!_domain) {
@@ -36,6 +41,15 @@ const string& Error::domain()
     }
 
     return *_domain;
+}
+
+void Error::setDomain(const string &domain)
+{
+    if (_domain) {
+        *_domain = domain;
+    } else {
+        _domain.reset(new string(domain));
+    }
 }
 
 const Variant& Error::userInfo()
@@ -86,4 +100,16 @@ bool Error::isEmpty() const
     return !(_domain && _userInfo);
 }
 
+
+Error& Error::operator=(Error &&rhs)
+{
+    _code = rhs._code;
+    if (rhs._userInfo) {
+        _userInfo = std::move(rhs._userInfo);
+    }
+    if (rhs._domain) {
+        _domain = std::move(rhs._domain);
+    }
+    return *this;
+}
 FMDB_END

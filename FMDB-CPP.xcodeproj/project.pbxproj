@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */; };
-		FB82D6941E5555EC007D6E15 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
 		FB82D6961E55A3CB007D6E15 /* FMDatabaseQueueTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */; };
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
 		FB88CB171E4C4600005EEECD /* FMDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB0E1E4C4600005EEECD /* FMDatabase.cpp */; };
@@ -16,6 +15,8 @@
 		FB88CB191E4C4600005EEECD /* FMResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB131E4C4600005EEECD /* FMResultSet.cpp */; };
 		FB88CB1A1E4C4600005EEECD /* FMStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB151E4C4600005EEECD /* FMStatement.cpp */; };
 		FB88CB1D1E4C4777005EEECD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
+		FB89169A1E56AADA004B0938 /* FMDatabaseAdditionsTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB8916991E56AADA004B0938 /* FMDatabaseAdditionsTests.mm */; };
+		FB89169D1E56D2B6004B0938 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */; };
 		FB8C571B1E52AC210080D089 /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8C57191E52AC210080D089 /* Error.cpp */; };
 		FB8C571C1E52AC210080D089 /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8C57191E52AC210080D089 /* Error.cpp */; };
 		FB8D2D891E4D82B70060F9F3 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
@@ -57,6 +58,7 @@
 		FB88CB151E4C4600005EEECD /* FMStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FMStatement.cpp; sourceTree = "<group>"; };
 		FB88CB161E4C4600005EEECD /* FMStatement.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FMStatement.hpp; sourceTree = "<group>"; };
 		FB88CB1C1E4C4777005EEECD /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		FB8916991E56AADA004B0938 /* FMDatabaseAdditionsTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseAdditionsTests.mm; sourceTree = "<group>"; };
 		FB8C57191E52AC210080D089 /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		FB8C571A1E52AC210080D089 /* Error.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Error.hpp; sourceTree = "<group>"; };
 		FB8D2D861E4D6D0C0060F9F3 /* FMDBDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDBDefs.h; sourceTree = "<group>"; };
@@ -88,7 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB82D6941E5555EC007D6E15 /* libsqlite3.0.tbd in Frameworks */,
+				FB89169D1E56D2B6004B0938 /* libsqlite3.0.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,6 +174,7 @@
 				FBA2F8281E51BB4E00589450 /* Info.plist */,
 				FBA2F82E1E51BBB100589450 /* FMDBTempDBTests.h */,
 				FBA2F82C1E51BB9700589450 /* FMDBTempDBTests.mm */,
+				FB8916991E56AADA004B0938 /* FMDatabaseAdditionsTests.mm */,
 				FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */,
 				FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */,
 				FBA2F8361E51C05400589450 /* FMResultSetTests.mm */,
@@ -292,6 +295,7 @@
 				FB8C571C1E52AC210080D089 /* Error.cpp in Sources */,
 				FB82D6961E55A3CB007D6E15 /* FMDatabaseQueueTests.mm in Sources */,
 				FBA2F8321E51BBD500589450 /* FMStatement.cpp in Sources */,
+				FB89169A1E56AADA004B0938 /* FMDatabaseAdditionsTests.mm in Sources */,
 				FBA2F8331E51BBD500589450 /* Date.cpp in Sources */,
 				FBA2F8311E51BBD500589450 /* FMResultSet.cpp in Sources */,
 				FBA2F8371E51C05400589450 /* FMResultSetTests.mm in Sources */,
