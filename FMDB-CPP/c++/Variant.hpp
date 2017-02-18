@@ -68,22 +68,22 @@ public:
 
     enum class Type : unsigned long long {
         NONE = 0,
-        BOOLEAN,
-        CHAR,
-        BYTE,
-        INTEGER,
-        UINTEGER,
-        FLOAT,
-        DOUBLE,
-        LONGLONG,
-        ULONGLONG,
-        CSTRING,
-        STRING,
-        DATA,
-        DATE,
-        VARIANTVECTOR,
-        VARIANTMAP,
-        VARIANTMAPINTKEY
+        BOOLEAN = 1,
+        CHAR = 2,
+        BYTE = 3,
+        INTEGER = 4,
+        UINTEGER = 5,
+        FLOAT = 6,
+        DOUBLE = 7,
+        LONGLONG = 8,
+        ULONGLONG = 9,
+        STRING = 10,
+        CSTRING = 11,
+        DATA = 12,
+        DATE = 13,
+        VARIANTVECTOR = 14,
+        VARIANTMAP = 15,
+        VARIANTMAPINTKEY = 16,
     };
 
     /**
@@ -121,9 +121,9 @@ public:
     unsigned long long toULongLong() const;
     const char *toCString() const;
 
+    Date toDate() const;
+
     string toString();
-	const Date& toDate() const;
-    
 	/** Return stored string object if type is STRING, otherwise will trigger error. */
 	string& toString() const;
 

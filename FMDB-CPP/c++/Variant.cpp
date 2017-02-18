@@ -27,42 +27,49 @@ Variant::Variant()
 Variant::Variant(bool v)
 :_type(Type::BOOLEAN)
 {
+    _field.unsignedLongLongVal = 0;
     _field.boolVal = v;
 }
 
 Variant::Variant(char v)
 :_type(Type::CHAR)
 {
+    _field.unsignedLongLongVal = 0;
     _field.charVal = v;
 }
 
 Variant::Variant(unsigned char v)
 :_type(Type::BYTE)
 {
+    _field.unsignedLongLongVal = 0;
     _field.byteVal = v;
 }
 
 Variant::Variant(int v)
 :_type(Type::INTEGER)
 {
+    _field.unsignedLongLongVal = 0;
     _field.intVal = v;
 }
 
 Variant::Variant(unsigned int v)
 :_type(Type::UINTEGER)
 {
+    _field.unsignedLongLongVal = 0;
     _field.unsignedVal = v;
 }
 
 Variant::Variant(float v)
 :_type(Type::FLOAT)
 {
+    _field.unsignedLongLongVal = 0;
     _field.floatVal = v;
 }
 
 Variant::Variant(double v)
 :_type(Type::DOUBLE)
 {
+    _field.unsignedLongLongVal = 0;
     _field.doubleVal = v;
 }
 
@@ -326,24 +333,29 @@ string Variant::description() const
     return str;
 }
 
+static bool ____convertion[(int)Variant::Type::VARIANTMAPINTKEY + 1][(int)Variant::Type::VARIANTMAPINTKEY + 1] =
+{
+    /*      none,bool,char,byte,int,uint,float,double,long,ulong,str,cstr,data,date*/
+    /*None*/{0,  0,   0,   0,   0,  0,   0,    0,     0,   0,    1,  1,   0,   0},
+    /*bool*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*char*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*byte*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*int */{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*uint*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*floa*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*doub*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*long*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*ulon*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+    /*str */{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  1,   0,   1},
+    /*cstr*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  1,   0,   1},
+    /*data*/{0,  0,   0,   0,   0,  0,   0,    0,     0,   0,    0,  0,   0,   0},
+    /*date*/{0,  1,   1,   1,   1,  1,   1,    1,     1,   1,    1,  0,   0,   1},
+
+};
+
 bool Variant::convert(Type toType) const
 {
-    if (_type == Type::NONE) {
-        if (toType == Type::STRING) {
-            return true;
-        }
-        return false;
-    }
-    if (_type == toType) {
-        return true;
-    }
-    if (_type == Type::DATE && toType == Type::STRING) {
-        return true;
-    }
-    if (toType >= Type::DATA || _type >= Type::DATA) { // Data以上的数据结构不能够被转换
-        return false;
-    }
-    return true;
+    return ____convertion[(int)_type][(int)toType];
 }
 
 bool Variant::toBool() const
@@ -386,7 +398,7 @@ bool Variant::toBool() const
             break;
         case Type::DATA:
             break;
-        case Type::DATE:
+        case Type::DATE: return static_cast<bool>(static_cast<const Date *>(_field.object)->timeIntervalSince1970().count());
             break;
         case Type::VARIANTVECTOR:
             break;
@@ -440,7 +452,7 @@ char Variant::toChar() const
             break;
         case Type::DATA:
             break;
-        case Type::DATE:
+        case Type::DATE: return static_cast<char>(static_cast<const Date *>(_field.object)->timeIntervalSince1970().count());
             break;
         case Type::VARIANTVECTOR:
             break;
@@ -499,7 +511,7 @@ int Variant::toInt() const
             break;
         case Type::DATA:
             break;
-        case Type::DATE:
+        case Type::DATE: return static_cast<int>(static_cast<const Date *>(_field.object)->timeIntervalSince1970().count());
             break;
         case Type::VARIANTVECTOR:
             break;
@@ -565,7 +577,7 @@ double Variant::toDouble() const
             break;
         case Type::DATA:
             break;
-        case Type::DATE:
+        case Type::DATE: return static_cast<double>(static_cast<const Date *>(_field.object)->timeIntervalSince1970().count());
             break;
         case Type::VARIANTVECTOR:
             break;
@@ -620,6 +632,7 @@ long long Variant::toLongLong() const
         case Type::DATA:
             break;
         case Type::DATE:
+            return static_cast<long long>(static_cast<const Date *>(_field.object)->timeIntervalSince1970().count());
             break;
         case Type::VARIANTVECTOR:
             break;
@@ -641,7 +654,10 @@ unsigned long long Variant::toULongLong() const
 
 const char *Variant::toCString() const
 {
-    _assert(_type == Type::CSTRING, "");
+    _assert(convert(Type::CSTRING), "");
+    if (!_field.object) {
+        return "(null)";
+    }
     return static_cast<const char *>(_field.object);
 }
 
@@ -696,10 +712,52 @@ string Variant::toString()
 	return ss.str();
 }
 
-const Date& Variant::toDate() const
+Date Variant::toDate() const
 {
-	_assert(convert(Type::DATE), "Can't convert to Date.");
-	return *static_cast<const Date *>(_field.object);
+    _assert(convert(Type::DATE), "Can't convert to Date.");
+    switch (_type) {
+        case Type::NONE:
+            break;
+        case Type::BOOLEAN:
+        case Type::CHAR:
+        case Type::BYTE:
+        case Type::INTEGER:
+        case Type::UINTEGER:
+            return Date::dateWithTimeIntervalSince1970(TimeInterval(_field.unsignedVal));
+            break;
+        case Type::FLOAT: return Date::dateWithTimeIntervalSince1970(TimeInterval(_field.floatVal));
+            break;
+        case Type::DOUBLE: return Date::dateWithTimeIntervalSince1970(TimeInterval(_field.doubleVal));
+            break;
+        case Type::LONGLONG:
+        case Type::ULONGLONG: return Date::dateWithTimeIntervalSince1970(TimeInterval(_field.unsignedLongLongVal));
+            break;
+        case Type::CSTRING:
+            if (!_field.object) {
+                break;
+            }
+            return Date::dateFromString(static_cast<const char *>(_field.object));
+            break;
+        case Type::STRING: {
+            if (!_field.object) {
+                break;
+            }
+            return Date::dateFromString(*static_cast<const string *>(_field.object));
+        }
+            break;
+        case Type::DATA:
+            break;
+        case Type::DATE:
+            return *static_cast<const Date *>(_field.object);
+            break;
+        case Type::VARIANTVECTOR:
+            break;
+        case Type::VARIANTMAP:
+            break;
+        case Type::VARIANTMAPINTKEY:
+            break;
+    }
+    return Date::dateEpoch();
 }
 
 string& Variant::toString() const
@@ -924,15 +982,6 @@ Variant & Variant::operator=(const Date & v)
     *static_cast<Date *>(_field.object) = v;
     return *this;
 }
-
-//Variant & Variant::operator=(shared_ptr<Date> &&v)
-//{
-//    clear();
-//    _type = Type::DATE;
-//    v.reset();
-//    _field.object = 0;
-//    return *this;
-//}
 
 Variant & Variant::operator=(const VariantVector & v)
 {

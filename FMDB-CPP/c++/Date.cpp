@@ -94,6 +94,11 @@ Date Date::dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate)
     return sinceDate;
 }
 
+Date Date::dateEpoch()
+{
+    return dateWithTimeIntervalSince1970(TimeInterval(0));
+}
+
 #ifdef WIN32
 
 void strptime(const char *buf, const char *format, struct tm *tm)
@@ -106,8 +111,16 @@ void strptime(const char *buf, const char *format, struct tm *tm)
 
 Date Date::dateFromString(const string &dateString)
 {
-    struct tm tm;
+    struct tm tm = {0};
     strptime(dateString.c_str(), FMDB_CPP_DATE_FORMAT, &tm);
+
+    struct tm validate_tm{0};
+    if (memcmp(&tm, &validate_tm, sizeof(struct tm)) == 0) {
+        double count = atof(dateString.c_str());
+        Date date = dateEpoch();
+        date += TimeInterval(count);
+        return date;
+    }
 
     time_point t;
     Date date(t);

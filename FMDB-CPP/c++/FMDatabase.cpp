@@ -428,7 +428,7 @@ void FMDatabase::bindObject(const Variant & obj, int toColumn, sqlite3_stmt * in
         }
         sqlite3_bind_blob(inStmt, toColumn, bytes, (int)length, SQLITE_STATIC);
 	} else if (obj.isTypeOf(Variant::Type::DATE)) {
-        auto &date = obj.toDate();
+        auto date = obj.toDate();
 		sqlite3_bind_double(inStmt, toColumn, date.timeIntervalSince1970().count());
 	} else if (obj.isTypeOf(Variant::Type::CSTRING)){
         sqlite3_bind_text(inStmt, toColumn, obj.toCString(), -1, SQLITE_STATIC);

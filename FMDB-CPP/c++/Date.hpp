@@ -90,6 +90,7 @@ public:
     static Date dateWithTimeIntervalSince1970(TimeInterval secs);
     static Date dateWithTimeIntervalSinceReferenceDate(TimeInterval ti);
     static Date dateWithTimeInterval(TimeInterval secsToAdded, Date sinceDate);
+    static Date dateEpoch();
     static Date dateFromString(const std::string &dateString);
 
     static string stringFromDate(const Date &date);
@@ -106,7 +107,7 @@ public:
     template<typename clock_type>
     Date& operator += (const clock_type &clocks)
     {
-        d += clocks;
+        d += duration_cast<system_clock::duration>(clocks);
         return *this;
     }
 
@@ -118,7 +119,7 @@ public:
     template<typename clock_type>
     Date& operator -= (const clock_type &clocks)
     {
-        d -= clocks;
+        d -= duration_cast<system_clock::duration>(clocks);
         return *this;
     }
 

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB384B3A1E57FD6C00F2E6B4 /* VariantTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB384B391E57FD6C00F2E6B4 /* VariantTests.mm */; };
+		FB384B3B1E57FD9B00F2E6B4 /* Date.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D871E4D82B70060F9F3 /* Date.cpp */; };
+		FB384B3C1E57FD9B00F2E6B4 /* Variant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8D2D8C1E4DBB380060F9F3 /* Variant.cpp */; };
+		FB384B3D1E57FD9B00F2E6B4 /* Error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB8C57191E52AC210080D089 /* Error.cpp */; };
 		FB77C0631E52F7FA001CAB28 /* FMDatabaseTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */; };
 		FB82D6961E55A3CB007D6E15 /* FMDatabaseQueueTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */; };
 		FB88CB071E4C45E8005EEECD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB88CB061E4C45E8005EEECD /* main.cpp */; };
@@ -44,6 +48,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB384B2F1E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "fmdb-cpp-framework-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB384B331E57FD3D00F2E6B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB384B391E57FD6C00F2E6B4 /* VariantTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VariantTests.mm; sourceTree = "<group>"; };
 		FB77C0621E52F7FA001CAB28 /* FMDatabaseTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseTests.mm; sourceTree = "<group>"; };
 		FB82D6951E55A3CB007D6E15 /* FMDatabaseQueueTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FMDatabaseQueueTests.mm; sourceTree = "<group>"; };
 		FB88CB031E4C45E8005EEECD /* FMDB-CPP */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "FMDB-CPP"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +85,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FB384B2C1E57FD3D00F2E6B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FB88CB001E4C45E8005EEECD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -97,11 +111,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB384B301E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests */ = {
+			isa = PBXGroup;
+			children = (
+				FB384B391E57FD6C00F2E6B4 /* VariantTests.mm */,
+				FB384B331E57FD3D00F2E6B4 /* Info.plist */,
+			);
+			path = "fmdb-cpp-framework-tests";
+			sourceTree = "<group>";
+		};
 		FB88CAFA1E4C45E8005EEECD = {
 			isa = PBXGroup;
 			children = (
 				FB88CB051E4C45E8005EEECD /* FMDB-CPP */,
 				FBA2F8251E51BB4E00589450 /* Tests */,
+				FB384B301E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests */,
 				FB88CB041E4C45E8005EEECD /* Products */,
 				FB88CB1B1E4C4777005EEECD /* Frameworks */,
 			);
@@ -112,6 +136,7 @@
 			children = (
 				FB88CB031E4C45E8005EEECD /* FMDB-CPP */,
 				FBA2F8241E51BB4E00589450 /* Tests.xctest */,
+				FB384B2F1E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -185,6 +210,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		FB384B2E1E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB384B361E57FD3D00F2E6B4 /* Build configuration list for PBXNativeTarget "fmdb-cpp-framework-tests" */;
+			buildPhases = (
+				FB384B2B1E57FD3D00F2E6B4 /* Sources */,
+				FB384B2C1E57FD3D00F2E6B4 /* Frameworks */,
+				FB384B2D1E57FD3D00F2E6B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fmdb-cpp-framework-tests";
+			productName = "fmdb-cpp-framework-tests";
+			productReference = FB384B2F1E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		FB88CB021E4C45E8005EEECD /* FMDB-CPP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FB88CB0A1E4C45E8005EEECD /* Build configuration list for PBXNativeTarget "FMDB-CPP" */;
@@ -228,6 +270,11 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = CHE;
 				TargetAttributes = {
+					FB384B2E1E57FD3D00F2E6B4 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 8652TQR753;
+						ProvisioningStyle = Automatic;
+					};
 					FB88CB021E4C45E8005EEECD = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 8652TQR753;
@@ -254,11 +301,19 @@
 			targets = (
 				FB88CB021E4C45E8005EEECD /* FMDB-CPP */,
 				FBA2F8231E51BB4E00589450 /* Tests */,
+				FB384B2E1E57FD3D00F2E6B4 /* fmdb-cpp-framework-tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FB384B2D1E57FD3D00F2E6B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBA2F8221E51BB4E00589450 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -269,6 +324,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FB384B2B1E57FD3D00F2E6B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB384B3D1E57FD9B00F2E6B4 /* Error.cpp in Sources */,
+				FB384B3C1E57FD9B00F2E6B4 /* Variant.cpp in Sources */,
+				FB384B3A1E57FD6C00F2E6B4 /* VariantTests.mm in Sources */,
+				FB384B3B1E57FD9B00F2E6B4 /* Date.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FB88CAFF1E4C45E8005EEECD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -306,6 +372,30 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		FB384B341E57FD3D00F2E6B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8652TQR753;
+				INFOPLIST_FILE = "fmdb-cpp-framework-tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hejunqiu.fmdb-cpp-framework-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		FB384B351E57FD3D00F2E6B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8652TQR753;
+				INFOPLIST_FILE = "fmdb-cpp-framework-tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.hejunqiu.fmdb-cpp-framework-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		FB88CB081E4C45E8005EEECD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -436,6 +526,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FB384B361E57FD3D00F2E6B4 /* Build configuration list for PBXNativeTarget "fmdb-cpp-framework-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB384B341E57FD3D00F2E6B4 /* Debug */,
+				FB384B351E57FD3D00F2E6B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		FB88CAFE1E4C45E8005EEECD /* Build configuration list for PBXProject "FMDB-CPP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
