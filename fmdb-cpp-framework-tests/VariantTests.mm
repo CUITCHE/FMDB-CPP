@@ -529,4 +529,17 @@ using namespace std;
     XCTAssertTrue(tmp.convert(Variant::Type::DATE), @"Should not be converted.");
 }
 
+- (void)test_movement_constructor
+{
+    // test static c type string.
+    Variant var1("123");
+    Variant var2(std::move(var1));
+    XCTAssert(var1.getType() == Variant::Type::NONE, @"Wrong type!");
+    XCTAssertEqual(var2.toString(), "123", @"move failure.");
+
+    Variant var3((VariantVector()));
+    auto p3 = var3.toVariantVector().data();
+    Variant var4(std::move(var3));
+    XCTAssertEqual(p3, var4.toVariantVector().data(), @"move failure");
+}
 @end
