@@ -27,49 +27,42 @@ Variant::Variant()
 Variant::Variant(bool v)
 :_type(Type::BOOLEAN)
 {
-    _field.unsignedLongLongVal = 0;
     _field.boolVal = v;
 }
 
 Variant::Variant(char v)
 :_type(Type::CHAR)
 {
-    _field.unsignedLongLongVal = 0;
     _field.charVal = v;
 }
 
 Variant::Variant(unsigned char v)
 :_type(Type::BYTE)
 {
-    _field.unsignedLongLongVal = 0;
     _field.byteVal = v;
 }
 
 Variant::Variant(int v)
 :_type(Type::INTEGER)
 {
-    _field.unsignedLongLongVal = 0;
     _field.intVal = v;
 }
 
 Variant::Variant(unsigned int v)
 :_type(Type::UINTEGER)
 {
-    _field.unsignedLongLongVal = 0;
     _field.unsignedVal = v;
 }
 
 Variant::Variant(float v)
 :_type(Type::FLOAT)
 {
-    _field.unsignedLongLongVal = 0;
     _field.floatVal = v;
 }
 
 Variant::Variant(double v)
 :_type(Type::DOUBLE)
 {
-    _field.unsignedLongLongVal = 0;
     _field.doubleVal = v;
 }
 

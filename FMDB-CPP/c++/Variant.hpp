@@ -66,7 +66,7 @@ public:
 
     ~Variant();
 
-    enum class Type : unsigned long long {
+    enum class Type : unsigned int {
         NONE = 0,
         BOOLEAN = 1,
         CHAR = 2,
@@ -204,19 +204,21 @@ private:
     void clear();
     void reset(Type type);
     union {
-        bool boolVal;
-        char charVal;
-        unsigned char byteVal;
-        int intVal;
-        unsigned int unsignedVal;
-        float floatVal;
-        double doubleVal;
-        long long longLongVal;
         unsigned long long unsignedLongLongVal;
+        long long longLongVal;
+        double doubleVal;
         void *object; // Data, Date, String, etc.
-//        std::unique_ptr<void> *object;
+        float floatVal;
+        unsigned int unsignedVal;
+        int intVal;
+        unsigned char byteVal;
+        char charVal;
+        bool boolVal;
     }_field{ 0 };
     Type _type;
+#if __PL64__
+    int reserved;
+#endif
 };
 
 FMDB_END
