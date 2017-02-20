@@ -99,10 +99,10 @@ public:
     bool isTypeOf(Type type) const { return type == _type; }
 
     /**
-     * Checks if the Variant is null.
+     * Checks if the Variant is null(type is none or pointer is null if type is object.).
      * @return True if the Variant is null, false if not.
      */
-	bool isNull() const { return _type == Type::NONE; }
+    bool isNull() const;
 
     /** Gets the value type. */
     Type getType() const { return _type; }

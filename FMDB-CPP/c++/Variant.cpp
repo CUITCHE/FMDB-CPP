@@ -354,6 +354,17 @@ bool Variant::convert(Type toType) const
     return ____convertion[(int)_type][(int)toType];
 }
 
+bool Variant::isNull() const
+{
+    if (_type == Type::NONE) {
+        return true;
+    }
+    if (_type >= Type::STRING && _field.object == nullptr) {
+        return true;
+    }
+    return false;
+}
+
 bool Variant::toBool() const
 {
     _assert(convert(Type::BOOLEAN), "Can't convert to boolea");
